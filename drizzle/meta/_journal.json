@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1783127039196,
+      "tag": "0000_normal_falcon",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1783128082604,
+      "tag": "0001_romantic_human_fly",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1783154255823,
+      "tag": "0002_useful_wilson_fisk",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `simUsers` ADD `expiraEm` timestamp;
