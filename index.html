@@ -1,1027 +1,370 @@
-<html class="dark" lang="pt-BR">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1" name="viewport"/>
-  <title>
-   JSF Elétrico — Simulador de Comandos Elétricos
-  </title>
-  <meta content="Simulador de comandos elétricos para Android: monte diagramas, simule partidas de motores e aprenda na prática. Baixe grátis o JSF Elétrico na Play Store." name="description"/>
-  <meta content="simulador de comandos elétricos, comandos elétricos, JSF Elétrico, partida de motores, diagramas elétricos, aplicativo Android" name="keywords"/>
-  <meta content="#166184" name="theme-color"/>
-  <!-- Open Graph (WhatsApp, Facebook) -->
-  <meta content="website" property="og:type"/>
-  <meta content="JSF Elétrico" property="og:site_name"/>
-  <meta content="JSF Elétrico — Simulador de Comandos Elétricos" property="og:title"/>
-  <meta content="Simulador de comandos elétricos para Android: monte diagramas, simule partidas de motores e aprenda na prática. Baixe grátis o JSF Elétrico na Play Store." property="og:description"/>
-  <meta content="https://jsfeletrico.com/" property="og:url"/>
-  <meta content="https://jsfeletrico.com/manus-storage/og_image_0ee5027e.jpg" property="og:image"/>
-  <meta content="1200" property="og:image:width"/>
-  <meta content="630" property="og:image:height"/>
-  <meta content="JSF Elétrico — simulador de comandos elétricos no celular" property="og:image:alt"/>
-  <meta content="pt_BR" property="og:locale"/>
-  <!-- Twitter Card -->
-  <meta content="summary_large_image" name="twitter:card"/>
-  <meta content="JSF Elétrico — Simulador de Comandos Elétricos" name="twitter:title"/>
-  <meta content="Simulador de comandos elétricos para Android: monte diagramas, simule partidas de motores e aprenda na prática. Baixe grátis o JSF Elétrico na Play Store." name="twitter:description"/>
-  <meta content="https://jsfeletrico.com/manus-storage/og_image_0ee5027e.jpg" name="twitter:image"/>
-  <link href="/favicon.ico" rel="icon" sizes="48x48"/>
-  <link href="/favicon-48.png" rel="icon" sizes="48x48" type="image/png"/>
-  <link href="/favicon-96.png" rel="icon" sizes="96x96" type="image/png"/>
-  <link href="/favicon-192.png" rel="icon" sizes="192x192" type="image/png"/>
-  <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-  <link crossorigin="" href="/assets/index-BvzNXjtw.css" rel="stylesheet"/>
-  <link href="https://jsfeltrico.manus.space/" rel="canonical"/>
- </head>
- <body>
-  <div data-manus_click_id="1" data-manus_clickable="true" id="root">
-   <section aria-atomic="false" aria-label="Notifications alt+T" aria-live="polite" aria-relevant="additions text" tabindex="-1">
-   </section>
-   <div class="min-h-screen circuit-grid text-foreground" data-loc="client/src/pages/Home.tsx:313">
-    <header class="sticky top-0 z-40 jsf-toolbar-gradient border-b border-[#0e3f59] shadow-lg" data-loc="client/src/pages/Home.tsx:315">
-     <div class="container flex h-16 items-center justify-between" data-loc="client/src/pages/Home.tsx:316">
-      <a class="flex items-center gap-3" data-loc="client/src/pages/Home.tsx:317" data-manus_click_id="2" data-manus_clickable="true" href="#inicio">
-       <img alt="Ícone do app JSF Elétrico" class="h-10 w-10 rounded-xl border border-white/20 shadow-md" data-loc="client/src/pages/Home.tsx:318" src="/manus-storage/icone_app_cdd01151.png"/>
-       <span class="font-display text-lg font-bold tracking-wide text-white" data-loc="client/src/pages/Home.tsx:323">
-        JSF
-        <span class="text-[#7dd3fc]" data-loc="client/src/pages/Home.tsx:324">
-         Elétrico
-        </span>
-       </span>
-      </a>
-      <nav class="hidden items-center gap-6 text-sm font-medium text-white/85 md:flex" data-loc="client/src/pages/Home.tsx:327">
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:328" data-manus_click_id="3" data-manus_clickable="true" href="#recursos">
-        Recursos
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:329" data-manus_click_id="4" data-manus_clickable="true" href="#galeria">
-        Simulador
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:330" data-manus_click_id="5" data-manus_clickable="true" href="#simbologia">
-        Simbologia
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:331" data-manus_click_id="6" data-manus_clickable="true" href="#faq">
-        FAQ
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:332" data-manus_click_id="7" data-manus_clickable="true" href="/sobre">
-        Sobre
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:333" data-manus_click_id="8" data-manus_clickable="true" href="#contato">
-        Contato
-       </a>
-       <a class="flex items-center gap-1.5 rounded-lg border border-[#38bdf8]/50 bg-[#38bdf8]/10 px-3 py-1.5 font-semibold text-[#7dd3fc] transition hover:bg-[#38bdf8]/20" data-loc="client/src/pages/Home.tsx:334" data-manus_click_id="9" data-manus_clickable="true" href="/simulador">
-        <svg class="lucide lucide-zap h-3.5 w-3.5" data-loc="client/src/pages/Home.tsx:335" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-         <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z">
-         </path>
-        </svg>
-        Simulador online
-       </a>
-      </nav>
-      <a class="inline-flex items-center gap-2 rounded-lg bg-[#28a745] px-4 py-2 text-sm font-bold text-white shadow-md transition hover:brightness-110" data-loc="client/src/pages/Home.tsx:339" data-manus_click_id="10" data-manus_clickable="true" href="https://play.google.com/store/apps/details?id=com.jsfeletrico.app" rel="noopener noreferrer" target="_blank">
-       <svg class="lucide lucide-play h-4 w-4 fill-current" data-loc="client/src/pages/Home.tsx:345" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="6 3 20 12 6 21 6 3">
-        </polygon>
-       </svg>
-       <span class="hidden sm:inline" data-loc="client/src/pages/Home.tsx:346">
-        Baixar na Play Store
-       </span>
-       <span class="sm:hidden" data-loc="client/src/pages/Home.tsx:347">
-        Baixar
-       </span>
-      </a>
-     </div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JSF Elétrico - Simulador interativo de comandos elétricos">
+    <title>JSF Elétrico — Simulador de Comandos Elétricos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #166184 100%);
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(22, 97, 132, 0.95);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #00d4ff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            padding: 80px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.9) 0%, rgba(22, 97, 132, 0.8) 100%);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #00d4ff;
+            color: #0a0e27;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background: #00b8d4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #00d4ff;
+            border: 2px solid #00d4ff;
+        }
+
+        .btn-secondary:hover {
+            background: #00d4ff;
+            color: #0a0e27;
+        }
+
+        section {
+            padding: 60px 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        section h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #00d4ff;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: rgba(26, 42, 74, 0.8);
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid #00d4ff;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-card h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .feature-card p {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .gallery-item {
+            background: rgba(26, 42, 74, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-item p {
+            padding: 15px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        footer {
+            background: rgba(15, 61, 82, 0.95);
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        footer p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(26, 42, 74, 0.8);
+            border-radius: 8px;
+        }
+
+        .contact-info a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                gap: 15px;
+                font-size: 12px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            section h2 {
+                font-size: 28px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">⚡ JSF Elétrico</div>
+            <nav>
+                <a href="#inicio">Início</a>
+                <a href="#recursos">Recursos</a>
+                <a href="#simulador">Simulador</a>
+                <a href="#sobre">Sobre</a>
+                <a href="#contato">Contato</a>
+            </nav>
+        </div>
     </header>
-    <main data-loc="client/src/pages/Home.tsx:352" id="inicio">
-     <section class="relative overflow-hidden jsf-splash-gradient" data-loc="client/src/pages/Home.tsx:354">
-      <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 hidden lg:block" data-loc="client/src/pages/Home.tsx:244">
-       <svg class="opacity-40" data-loc="client/src/pages/Home.tsx:245" height="220" width="100%">
-        <path class="current-flow" d="M -10 40 H 300 V 120 H 640 V 60 H 1000 V 140 H 1600" data-loc="client/src/pages/Home.tsx:246" fill="none" stroke="#ef4444" stroke-width="2.5">
-        </path>
-        <path class="current-flow" d="M -10 80 H 220 V 170 H 560 V 100 H 940 V 190 H 1600" data-loc="client/src/pages/Home.tsx:253" fill="none" stroke="#3b82f6" stroke-width="2.5" style="animation-delay: 0.5s;">
-        </path>
-       </svg>
-      </div>
-      <div class="container relative grid gap-10 py-16 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-14 lg:py-24" data-loc="client/src/pages/Home.tsx:356">
-       <div data-loc="client/src/pages/Home.tsx:357" style="opacity: 1; transform: none;">
-        <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-white/90 backdrop-blur" data-loc="client/src/pages/Home.tsx:362">
-         <svg class="lucide lucide-smartphone h-3.5 w-3.5" data-loc="client/src/pages/Home.tsx:363" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-          <rect height="20" rx="2" ry="2" width="14" x="5" y="2">
-          </rect>
-          <path d="M12 18h.01">
-          </path>
-         </svg>
-         Disponível na Play Store para Android
+
+    <section class="hero" id="inicio">
+        <div class="container">
+            <h1>Monte, ligue e veja funcionar.</h1>
+            <p>O JSF Elétrico é um simulador interativo de comandos elétricos para quem quer aprender e praticar montagens no celular. Arraste componentes, ligue os fios e simule partidas de motores com realismo — inclusive as falhas.</p>
+            <div class="cta-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.jsfeletrico.app" class="btn btn-primary">📱 Baixar na Play Store</a>
+                <a href="#simulador" class="btn btn-secondary">🔌 Acessar Simulador Online</a>
+            </div>
         </div>
-        <h1 class="font-display mt-6 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl" data-loc="client/src/pages/Home.tsx:366">
-         Monte, ligue e veja
-         <span class="text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:368">
-          funcionar
-         </span>
-         .
-        </h1>
-        <p class="mt-5 max-w-xl text-base leading-relaxed text-[#b0c4de] sm:text-lg" data-loc="client/src/pages/Home.tsx:370">
-         O
-         <strong class="text-white" data-loc="client/src/pages/Home.tsx:371">
-          JSF Elétrico
-         </strong>
-         é um simulador interativo de comandos elétricos para quem quer aprender e praticar montagens no celular. Arraste componentes, ligue os fios e simule partidas de motores com realismo — inclusive as falhas.
-        </p>
-        <div class="mt-8 flex flex-wrap items-center gap-4" data-loc="client/src/pages/Home.tsx:376">
-         <a class="glow-pulse inline-flex items-center gap-2.5 rounded-xl bg-[#28a745] px-7 py-3.5 text-base font-bold text-white shadow-xl transition hover:brightness-110" data-loc="client/src/pages/Home.tsx:377" data-manus_click_id="11" data-manus_clickable="true" href="https://play.google.com/store/apps/details?id=com.jsfeletrico.app" rel="noopener noreferrer" target="_blank">
-          <svg class="lucide lucide-play h-5 w-5 fill-current" data-loc="client/src/pages/Home.tsx:383" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <polygon points="6 3 20 12 6 21 6 3">
-           </polygon>
-          </svg>
-          Baixar grátis na Play Store
-         </a>
-         <a class="inline-flex items-center gap-2 rounded-xl border border-[#38bdf8]/60 bg-[#38bdf8]/15 px-6 py-3.5 text-base font-bold text-[#7dd3fc] shadow-lg backdrop-blur transition hover:bg-[#38bdf8]/25" data-loc="client/src/pages/Home.tsx:386" data-manus_click_id="12" data-manus_clickable="true" href="/simulador">
-          <svg class="lucide lucide-zap h-5 w-5" data-loc="client/src/pages/Home.tsx:390" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z">
-           </path>
-          </svg>
-          Acesse o simulador online
-         </a>
-         <a class="inline-flex items-center gap-1.5 rounded-xl border border-white/25 bg-white/5 px-6 py-3.5 text-base font-semibold text-white backdrop-blur transition hover:bg-white/10" data-loc="client/src/pages/Home.tsx:393" data-manus_click_id="13" data-manus_clickable="true" href="#galeria">
-          Ver o simulador
-          <svg class="lucide lucide-chevron-right h-4 w-4" data-loc="client/src/pages/Home.tsx:398" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="m9 18 6-6-6-6">
-           </path>
-          </svg>
-         </a>
+    </section>
+
+    <section id="recursos">
+        <div class="container">
+            <h2>Tudo o que o simulador oferece</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>📚 Biblioteca Completa</h3>
+                    <p>Contatores, relés térmicos, temporizadores, botoeiras, sinalizadores e motores trifásicos prontos para arrastar e soltar.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚙️ Controle de Velocidade</h3>
+                    <p>Inversores de frequência e soft-starters com ajuste de rampas de aceleração e desaceleração.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚠️ Simulação de Falhas</h3>
+                    <p>Curto-circuito, falta de fase, sobrecarga e erros de inversor, com ajuste de corrente nos disjuntores e relés térmicos.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔊 Efeitos Sonoros</h3>
+                    <p>Sons realistas dos motores na partida, em funcionamento, nas rampas e até em falhas como travamento ou queima.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 Ajustes Precisos</h3>
+                    <p>Temporizadores com precisão decimal e fios coloridos com função jumper para montar diagramas organizados.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📵 100% Offline</h3>
+                    <p>Salve seus projetos no aparelho, exporte em JSON ou PNG de alta resolução, sem depender de internet.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🖨️ Impressão com Cabeçalho</h3>
+                    <p>Imprima diagramas com cabeçalho personalizado: nome do projeto, data e o seu nome.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔒 Privacidade Total</h3>
+                    <p>Nenhum dado é coletado e nada é compartilhado com terceiros, conforme declarado na Play Store.</p>
+                </div>
+            </div>
         </div>
-        <div class="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm text-[#b0c4de]" data-loc="client/src/pages/Home.tsx:401">
-         <span class="flex items-center gap-2" data-loc="client/src/pages/Home.tsx:402">
-          <span class="terminal-dot dot-green" data-loc="client/src/pages/Home.tsx:403">
-          </span>
-          100% offline
-         </span>
-         <span class="flex items-center gap-2" data-loc="client/src/pages/Home.tsx:405">
-          <span class="terminal-dot dot-cyan" data-loc="client/src/pages/Home.tsx:406">
-          </span>
-          Nenhum dado coletado
-         </span>
-         <span class="flex items-center gap-2" data-loc="client/src/pages/Home.tsx:408">
-          <span class="terminal-dot" data-loc="client/src/pages/Home.tsx:409">
-          </span>
-          Simulação em tempo real
-         </span>
+    </section>
+
+    <section id="simulador">
+        <div class="container">
+            <h2>Simulador Online</h2>
+            <p style="text-align: center; font-size: 18px; margin-bottom: 30px;">Para acessar o simulador completo online, entre em contato conosco:</p>
+            <div class="contact-info">
+                <p>📧 <strong>Email:</strong> <a href="mailto:jsfeletrico@gmail.com">jsfeletrico@gmail.com</a></p>
+                <p style="margin-top: 10px;">Solicite acesso ao simulador online e receba instruções de login.</p>
+            </div>
         </div>
-       </div>
-       <div class="relative" data-loc="client/src/pages/Home.tsx:414" style="opacity: 1; transform: none;">
-        <div class="jsf-panel-teal overflow-hidden" data-loc="client/src/pages/Home.tsx:420">
-         <div class="jsf-toolbar-gradient flex items-center gap-2 px-4 py-2.5" data-loc="client/src/pages/Home.tsx:421">
-          <span class="h-2.5 w-2.5 rounded-full bg-[#28a745]" data-loc="client/src/pages/Home.tsx:422">
-          </span>
-          <span class="h-2.5 w-2.5 rounded-full bg-[#ffc107]" data-loc="client/src/pages/Home.tsx:423">
-          </span>
-          <span class="h-2.5 w-2.5 rounded-full bg-[#ef4444]" data-loc="client/src/pages/Home.tsx:424">
-          </span>
-          <span class="ml-2 font-display text-xs font-semibold tracking-wide text-white/80" data-loc="client/src/pages/Home.tsx:425">
-           JSF Elétrico — Simulação
-          </span>
-         </div>
-         <img alt="Print real do simulador: soft-starter em funcionamento com leituras de corrente e tensão" class="w-full bg-[#0a0a0a] object-contain" data-loc="client/src/pages/Home.tsx:429" loading="eager" src="/manus-storage/softstart_rodando_be11cc09.png"/>
+    </section>
+
+    <section id="sobre">
+        <div class="container">
+            <h2>Sobre o Projeto</h2>
+            <p style="text-align: center; font-size: 16px; line-height: 1.8; margin-bottom: 30px;">
+                O JSF Elétrico foi criado por <strong>Joelson da Silva Francisco</strong>, formado em eletrotécnica e apaixonado por manutenção elétrica. 
+                Transformou a vivência de campo em uma ferramenta de aprendizado que ajuda milhares de estudantes e profissionais a entender 
+                circuitos elétricos de forma prática e interativa.
+            </p>
+            <blockquote style="text-align: center; font-size: 18px; color: #00d4ff; font-style: italic; margin: 40px 0; padding: 20px; border-left: 4px solid #00d4ff;">
+                "Criei o app que eu queria ter quando comecei."<br>
+                <strong>— Joelson da Silva Francisco</strong>
+            </blockquote>
         </div>
-        <p class="mt-3 text-center text-xs text-[#b0c4de]/80" data-loc="client/src/pages/Home.tsx:436">
-         Captura de tela real do simulador em funcionamento
-        </p>
-       </div>
-      </div>
-     </section>
-     <div aria-hidden="true" class="flex items-center gap-2 container -mt-1 py-2" data-loc="client/src/pages/Home.tsx:268">
-      <span class="terminal-dot" data-loc="client/src/pages/Home.tsx:269">
-      </span>
-      <span class="fio fio-fase flex-1" data-loc="client/src/pages/Home.tsx:270">
-      </span>
-      <span class="terminal-dot dot-cyan" data-loc="client/src/pages/Home.tsx:271">
-      </span>
-      <span class="fio fio-neutro flex-1" data-loc="client/src/pages/Home.tsx:272">
-      </span>
-      <span class="terminal-dot dot-green" data-loc="client/src/pages/Home.tsx:273">
-      </span>
-     </div>
-     <section class="container py-10" data-loc="client/src/pages/Home.tsx:446">
-      <img alt="Banner do JSF Elétrico com celular mostrando o simulador" class="w-full rounded-2xl border border-[#166184]/60 shadow-2xl" data-loc="client/src/pages/Home.tsx:447" loading="lazy" src="/manus-storage/banner_principal_4a43ca8f.jpg" style="opacity: 1; transform: none;"/>
-     </section>
-     <section class="container py-12" data-loc="client/src/pages/Home.tsx:457">
-      <a class="jsf-panel group relative block overflow-hidden transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_24px_rgba(56,189,248,0.18)]" data-loc="client/src/pages/Home.tsx:458" data-manus_click_id="14" data-manus_clickable="true" href="/sobre" style="opacity: 1; transform: none;">
-       <div class="grid items-center gap-6 p-6 sm:p-8 md:grid-cols-[auto_1fr_auto]" data-loc="client/src/pages/Home.tsx:463">
-        <div class="mx-auto h-28 w-28 shrink-0 overflow-hidden rounded-full border-2 border-[#38bdf8]/50 shadow-[0_0_18px_rgba(56,189,248,0.25)] sm:h-32 sm:w-32" data-loc="client/src/pages/Home.tsx:464">
-         <img alt="Joelson da Silva Francisco, criador do JSF Elétrico, com capacete e equipamentos de segurança" class="h-full w-full object-cover object-top" data-loc="client/src/pages/Home.tsx:465" loading="lazy" src="/manus-storage/foto_joelson_retrato_alinhado_8892e133.png"/>
+    </section>
+
+    <section id="contato">
+        <div class="container">
+            <h2>Entre em Contato</h2>
+            <div class="contact-info">
+                <p>📧 <strong>Email:</strong> <a href="mailto:jsfeletrico@gmail.com">jsfeletrico@gmail.com</a></p>
+                <p style="margin-top: 15px;">🎮 <strong>Play Store:</strong> <a href="https://play.google.com/store/apps/details?id=com.jsfeletrico.app">Baixar JSF Elétrico</a></p>
+                <p style="margin-top: 15px;">📱 Disponível apenas para Android</p>
+            </div>
         </div>
-        <div class="text-center md:text-left" data-loc="client/src/pages/Home.tsx:472">
-         <p class="font-display inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:473">
-          <svg class="lucide lucide-user h-4 w-4" data-loc="client/src/pages/Home.tsx:474" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2">
-           </path>
-           <circle cx="12" cy="7" r="4">
-           </circle>
-          </svg>
-          Conheça o desenvolvedor
-         </p>
-         <h2 class="font-display mt-2 text-2xl font-bold text-white sm:text-3xl" data-loc="client/src/pages/Home.tsx:477">
-          Quem criou o JSF Elétrico?
-         </h2>
-         <p class="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base md:mx-0" data-loc="client/src/pages/Home.tsx:480">
-          Por trás do simulador existe uma história real: Joelson da Silva Francisco, formado em eletrotécnica e apaixonado por manutenção elétrica, transformou a vivência de campo em uma ferramenta de aprendizado. Descubra a trajetória que deu origem ao app.
-         </p>
-         <blockquote class="mx-auto mt-4 max-w-2xl border-l-2 border-[#38bdf8] pl-4 text-left md:mx-0" data-loc="client/src/pages/Home.tsx:486">
-          <p class="font-display text-base font-semibold italic text-[#7dd3fc] sm:text-lg" data-loc="client/src/pages/Home.tsx:487">
-           “Criei o app que eu queria ter quando comecei.”
-          </p>
-          <footer class="mt-1 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:490">
-           — Joelson da Silva Francisco, criador do JSF Elétrico
-          </footer>
-         </blockquote>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 JSF Elétrico. Todos os direitos reservados.</p>
+            <p style="margin-top: 10px; color: #666;">Desenvolvido com ❤️ para educação em eletrotécnica</p>
         </div>
-        <span class="mx-auto inline-flex items-center gap-2 rounded-xl border border-[#38bdf8]/50 bg-[#38bdf8]/10 px-5 py-3 text-sm font-bold text-[#7dd3fc] transition group-hover:bg-[#38bdf8]/20 md:mx-0" data-loc="client/src/pages/Home.tsx:495">
-         Ver a história
-         <svg class="lucide lucide-arrow-right h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" data-loc="client/src/pages/Home.tsx:497" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 12h14">
-          </path>
-          <path d="m12 5 7 7-7 7">
-          </path>
-         </svg>
-        </span>
-       </div>
-      </a>
-     </section>
-     <section class="container py-14" data-loc="client/src/pages/Home.tsx:504">
-      <div class="max-w-2xl" data-loc="client/src/pages/Home.tsx:505" style="opacity: 0; transform: translateY(24px);">
-       <p class="font-display text-sm font-semibold uppercase tracking-widest text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:506">
-        Como funciona
-       </p>
-       <h2 class="font-display mt-2 text-3xl font-bold text-white sm:text-4xl" data-loc="client/src/pages/Home.tsx:509">
-        Três passos para energizar seu primeiro circuito
-       </h2>
-      </div>
-      <div class="mt-10 grid gap-6 md:grid-cols-3" data-loc="client/src/pages/Home.tsx:513">
-       <div class="jsf-panel relative p-6" data-loc="client/src/pages/Home.tsx:515" style="opacity: 0; transform: translateY(24px);">
-        <span class="font-display absolute -top-4 left-6 flex h-9 w-9 items-center justify-center rounded-lg bg-[#166184] text-lg font-bold text-white shadow-lg" data-loc="client/src/pages/Home.tsx:521">
-         1
-        </span>
-        <h3 class="font-display mt-4 text-xl font-bold text-white" data-loc="client/src/pages/Home.tsx:524">
-         Monte
-        </h3>
-        <p class="mt-2 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:525">
-         Arraste os componentes da biblioteca para a bancada e ligue os fios coloridos: fase, neutro, terra e jumper.
-        </p>
-       </div>
-       <div class="jsf-panel relative p-6" data-loc="client/src/pages/Home.tsx:515" style="opacity: 0; transform: translateY(24px);">
-        <span class="font-display absolute -top-4 left-6 flex h-9 w-9 items-center justify-center rounded-lg bg-[#166184] text-lg font-bold text-white shadow-lg" data-loc="client/src/pages/Home.tsx:521">
-         2
-        </span>
-        <h3 class="font-display mt-4 text-xl font-bold text-white" data-loc="client/src/pages/Home.tsx:524">
-         Simule
-        </h3>
-        <p class="mt-2 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:525">
-         Toque em Simular e veja o circuito ganhar vida: contatores acionam, motores giram e sinaleiros acendem.
-        </p>
-       </div>
-       <div class="jsf-panel relative p-6" data-loc="client/src/pages/Home.tsx:515" style="opacity: 0; transform: translateY(24px);">
-        <span class="font-display absolute -top-4 left-6 flex h-9 w-9 items-center justify-center rounded-lg bg-[#166184] text-lg font-bold text-white shadow-lg" data-loc="client/src/pages/Home.tsx:521">
-         3
-        </span>
-        <h3 class="font-display mt-4 text-xl font-bold text-white" data-loc="client/src/pages/Home.tsx:524">
-         Aprenda
-        </h3>
-        <p class="mt-2 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:525">
-         Provoque falhas, ajuste proteções e entenda na prática como cada componente se comporta.
-        </p>
-       </div>
-      </div>
-     </section>
-     <section class="border-y border-[#166184]/30 bg-[#0f172a]/60 py-16" data-loc="client/src/pages/Home.tsx:532" id="recursos">
-      <div class="container" data-loc="client/src/pages/Home.tsx:533">
-       <div class="max-w-2xl" data-loc="client/src/pages/Home.tsx:534" style="opacity: 0; transform: translateY(24px);">
-        <p class="font-display text-sm font-semibold uppercase tracking-widest text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:535">
-         Recursos
-        </p>
-        <h2 class="font-display mt-2 text-3xl font-bold text-white sm:text-4xl" data-loc="client/src/pages/Home.tsx:538">
-         Tudo o que o simulador oferece
-        </h2>
-        <p class="mt-3 text-muted-foreground" data-loc="client/src/pages/Home.tsx:541">
-         Recursos oficiais do aplicativo, direto da página na Play Store.
-        </p>
-       </div>
-       <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-loc="client/src/pages/Home.tsx:545">
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-cable h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="M17 21v-2a1 1 0 0 1-1-1v-1a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1">
-           </path>
-           <path d="M19 15V6.5a1 1 0 0 0-7 0v11a1 1 0 0 1-7 0V9">
-           </path>
-           <path d="M21 21v-2h-4">
-           </path>
-           <path d="M3 5h4V3">
-           </path>
-           <path d="M7 5a1 1 0 0 1 1 1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1V3">
-           </path>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Biblioteca completa
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Contatores, relés térmicos, temporizadores, botoeiras, sinalizadores e motores trifásicos prontos para arrastar e soltar.
-         </p>
-        </div>
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-gauge h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="m12 14 4-4">
-           </path>
-           <path d="M3.34 19a10 10 0 1 1 17.32 0">
-           </path>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Controle de velocidade
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Inversores de frequência e soft-starters com ajuste de rampas de aceleração e desaceleração.
-         </p>
-        </div>
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-triangle-alert h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3">
-           </path>
-           <path d="M12 9v4">
-           </path>
-           <path d="M12 17h.01">
-           </path>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Simulação de falhas
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Curto-circuito, falta de fase, sobrecarga e erros de inversor, com ajuste de corrente nos disjuntores e relés térmicos.
-         </p>
-        </div>
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-volume2 h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z">
-           </path>
-           <path d="M16 9a5 5 0 0 1 0 6">
-           </path>
-           <path d="M19.364 18.364a9 9 0 0 0 0-12.728">
-           </path>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Efeitos sonoros
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Sons realistas dos motores na partida, em funcionamento, nas rampas e até em falhas como travamento ou queima.
-         </p>
-        </div>
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-timer h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <line x1="10" x2="14" y1="2" y2="2">
-           </line>
-           <line x1="12" x2="15" y1="14" y2="11">
-           </line>
-           <circle cx="12" cy="14" r="8">
-           </circle>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Ajustes precisos
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Temporizadores com precisão decimal e fios coloridos com função jumper para montar diagramas organizados.
-         </p>
-        </div>
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-folder-down h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z">
-           </path>
-           <path d="M12 10v6">
-           </path>
-           <path d="m15 13-3 3-3-3">
-           </path>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Tudo offline
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Salve seus projetos no aparelho, exporte em JSON ou PNG de alta resolução, sem depender de internet.
-         </p>
-        </div>
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-printer h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
-           </path>
-           <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6">
-           </path>
-           <rect height="8" rx="1" width="12" x="6" y="14">
-           </rect>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Impressão com cabeçalho
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Imprima diagramas com cabeçalho personalizado: nome do projeto, data e o seu nome.
-         </p>
-        </div>
-        <div class="jsf-panel group p-5 transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:547" style="opacity: 0; transform: translateY(24px);">
-         <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#166184]/40 text-[#38bdf8] transition group-hover:bg-[#166184]/70" data-loc="client/src/pages/Home.tsx:553">
-          <svg class="lucide lucide-shield-check h-5.5 w-5.5" data-loc="client/src/pages/Home.tsx:554" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-           </path>
-           <path d="m9 12 2 2 4-4">
-           </path>
-          </svg>
-         </div>
-         <h3 class="font-display mt-4 text-base font-bold text-white" data-loc="client/src/pages/Home.tsx:556">
-          Privacidade total
-         </h3>
-         <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:557">
-          Nenhum dado é coletado e nada é compartilhado com terceiros, conforme declarado na Play Store.
-         </p>
-        </div>
-       </div>
-      </div>
-     </section>
-     <section class="container py-16" data-loc="client/src/pages/Home.tsx:565" id="galeria">
-      <div class="max-w-2xl" data-loc="client/src/pages/Home.tsx:566" style="opacity: 0; transform: translateY(24px);">
-       <p class="font-display text-sm font-semibold uppercase tracking-widest text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:567">
-        Dentro do simulador
-       </p>
-       <h2 class="font-display mt-2 text-3xl font-bold text-white sm:text-4xl" data-loc="client/src/pages/Home.tsx:570">
-        Capturas de tela reais do app
-       </h2>
-       <p class="mt-3 text-muted-foreground" data-loc="client/src/pages/Home.tsx:573">
-        Erros que ensinam: curto, sobrecarga e falta de fase simulados de verdade. Toque em uma imagem para ampliar.
-       </p>
-      </div>
-      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-loc="client/src/pages/Home.tsx:579">
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)] sm:col-span-2 lg:col-span-3" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Diagrama de comando em simulação" class="w-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/diagrama_completo_dfb80530.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Diagrama de comando em simulação
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Contatores (KM), temporizadores (KT) e sinaleiros (H) energizados em tempo real.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Soft-starter em funcionamento" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/softstart_rodando_be11cc09.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Soft-starter em funcionamento
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Partida suave com leitura de corrente, tensão e porcentagem da rampa.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Inversor de frequência" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/inversor_rodando_324e265e.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Inversor de frequência
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Motor girando a 60 Hz com leitura de corrente e RPM no display.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Motor trifásico com placa" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/motor_placa_6b84aac9.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Motor trifásico com placa
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Toque na placa para ver e ajustar os dados do motor.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Relé térmico em sobrecarga" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/rele_sobrecarga_d183136e.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Relé térmico em sobrecarga
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          A proteção atua e mostra o alerta piscando, como na vida real.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Botoeira de emergência" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/emergencia_2f655f7a.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Botoeira de emergência
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Acionamento de emergência com destaque visual no diagrama.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Sinalização luminosa" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/sinaleira_verde_1766bb52.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Sinalização luminosa
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Sinaleiros acendem conforme o circuito é energizado.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Relé de tempo KT1" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/temporizador_03d6d07b.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Relé de tempo KT1
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Temporizador com ajuste de tempo em segundos e precisão decimal.
-         </p>
-        </div>
-       </button>
-       <button class="jsf-panel group overflow-hidden text-left transition duration-200 hover:border-[#38bdf8]/60 hover:shadow-[0_0_18px_rgba(56,189,248,0.15)]" data-loc="client/src/pages/Home.tsx:581" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-center justify-center bg-[#0a0a0a] p-3 h-64" data-loc="client/src/pages/Home.tsx:590">
-         <img alt="Biblioteca de componentes" class="max-h-full object-contain transition duration-300 group-hover:scale-[1.02]" data-loc="client/src/pages/Home.tsx:591" loading="lazy" src="/manus-storage/biblioteca_componentes_6963ec70.png"/>
-        </div>
-        <div class="border-t border-border/60 px-4 py-3" data-loc="client/src/pages/Home.tsx:598">
-         <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:599">
-          Biblioteca de componentes
-         </p>
-         <p class="mt-0.5 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:600">
-          Categorias organizadas: proteção, contatores, temporizadores, motores e mais.
-         </p>
-        </div>
-       </button>
-      </div>
-      <div class="jsf-panel-teal mt-12 scroll-mt-24 p-6 md:p-8" data-loc="client/src/pages/Home.tsx:607" id="simbologia" style="opacity: 0; transform: translateY(24px);">
-       <div class="flex items-center gap-3" data-loc="client/src/pages/Home.tsx:612">
-        <svg class="lucide lucide-book-open h-6 w-6 text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:613" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-         <path d="M12 7v14">
-         </path>
-         <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z">
-         </path>
-        </svg>
-        <h3 class="font-display text-xl font-bold text-white" data-loc="client/src/pages/Home.tsx:614">
-         Legenda da simbologia
-        </h3>
-       </div>
-       <p class="mt-2 text-sm text-muted-foreground" data-loc="client/src/pages/Home.tsx:616">
-        O que significam as letras que aparecem nos diagramas: a letra indica o tipo de componente e o número diferencia cada um (KM1, KM2, KM3...).
-       </p>
-       <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-loc="client/src/pages/Home.tsx:620">
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          Q
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Disjuntores
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Proteção e seccionamento do circuito. Ex.: Q1.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          F
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Relés de proteção
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Proteção contra sobrecarga e curto. Ex.: F1 (relé térmico).
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          KM
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Contatores
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Ligam e desligam o motor pela bobina. Ex.: KM1, KM2.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          KT
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Temporizadores
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Comandam ações após um tempo ajustado. Ex.: KT1, KT2.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          S
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Botoeiras e chaves
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Comandos do operador: liga, desliga, emergência.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          M
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Motores
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           A carga acionada. Ex.: M1 (motor trifásico M3~).
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          H
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Sinaleiros
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Lâmpadas de sinalização de estado. Ex.: H1, H2, H3.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          SS
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Soft-starter
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Faz a partida suave do motor. Ex.: SS1.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          INV
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Inversor de frequência
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Controla a velocidade do motor pela frequência.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          X
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Bornes
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           Pontos de conexão numerados. Ex.: X1, X2.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          PE / N
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Terra e neutro
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           PE é o aterramento de proteção; N é o neutro.
-          </p>
-         </div>
-        </div>
-        <div class="flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-4" data-loc="client/src/pages/Home.tsx:622">
-         <span class="shrink-0 rounded-md bg-[#166184]/40 px-2.5 py-1 font-mono text-sm font-bold text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:626">
-          R S T
-         </span>
-         <div data-loc="client/src/pages/Home.tsx:629">
-          <p class="text-sm font-semibold leading-tight text-white" data-loc="client/src/pages/Home.tsx:630">
-           Fases da rede
-          </p>
-          <p class="mt-1 text-xs leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:631">
-           As três fases de alimentação (L1, L2, L3).
-          </p>
-         </div>
-        </div>
-       </div>
-      </div>
-     </section>
-     <section class="border-y border-[#166184]/30 bg-[#0f172a]/60 py-14" data-loc="client/src/pages/Home.tsx:640">
-      <div class="container" data-loc="client/src/pages/Home.tsx:641">
-       <div class="jsf-panel-teal mx-auto max-w-3xl p-7 md:p-9" data-loc="client/src/pages/Home.tsx:642" style="opacity: 0; transform: translateY(24px);">
-        <div class="flex items-start gap-4" data-loc="client/src/pages/Home.tsx:643">
-         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#ffc107]/15 text-[#ffc107]" data-loc="client/src/pages/Home.tsx:644">
-          <svg class="lucide lucide-lock h-6 w-6" data-loc="client/src/pages/Home.tsx:645" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <rect height="11" rx="2" ry="2" width="18" x="3" y="11">
-           </rect>
-           <path d="M7 11V7a5 5 0 0 1 10 0v4">
-           </path>
-          </svg>
-         </div>
-         <div data-loc="client/src/pages/Home.tsx:647">
-          <h2 class="font-display text-2xl font-bold text-white" data-loc="client/src/pages/Home.tsx:648">
-           Acesso ao simulador
-          </h2>
-          <p class="mt-3 leading-relaxed text-muted-foreground" data-loc="client/src/pages/Home.tsx:651">
-           Agora você pode usar o simulador direto aqui no site! O acesso é liberado pelo administrador: se você ainda não tem e-mail e senha cadastrados, solicite pelo e-mail abaixo.
-          </p>
-          <div class="mt-5 flex flex-wrap gap-3" data-loc="client/src/pages/Home.tsx:656">
-           <a class="glow-pulse inline-flex items-center gap-2 rounded-lg bg-[#166184] px-5 py-2.5 text-sm font-bold text-white transition hover:brightness-115" data-loc="client/src/pages/Home.tsx:657" data-manus_click_id="15" data-manus_clickable="true" href="/simulador">
-            <svg class="lucide lucide-zap h-4 w-4" data-loc="client/src/pages/Home.tsx:661" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-             <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z">
-             </path>
-            </svg>
-            Entrar no simulador online
-           </a>
-           <a class="inline-flex items-center gap-2 rounded-lg border border-[#38bdf8]/40 bg-[#38bdf8]/10 px-5 py-2.5 text-sm font-bold text-[#7dd3fc] transition hover:bg-[#38bdf8]/20" data-loc="client/src/pages/Home.tsx:664" data-manus_click_id="16" data-manus_clickable="true" href="mailto:jsfeletrico@gmail.com?subject=Solicita%C3%A7%C3%A3o%20de%20acesso%20ao%20simulador%20JSF%20El%C3%A9trico&amp;body=Ol%C3%A1%2C%20quero%20solicitar%20acesso%20ao%20simulador%20JSF%20El%C3%A9trico.%0A%0AMeu%20nome%3A%20%0AMeu%20e-mail%3A%20">
-            <svg class="lucide lucide-mail h-4 w-4" data-loc="client/src/pages/Home.tsx:668" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-             <rect height="16" rx="2" width="20" x="2" y="4">
-             </rect>
-             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7">
-             </path>
-            </svg>
-            Solicitar acesso por e-mail
-           </a>
-           <a class="inline-flex items-center gap-2 rounded-lg border border-[#28a745]/60 bg-[#28a745]/10 px-5 py-2.5 text-sm font-bold text-[#4ade80] transition hover:bg-[#28a745]/20" data-loc="client/src/pages/Home.tsx:671" data-manus_click_id="17" data-manus_clickable="true" href="https://play.google.com/store/apps/details?id=com.jsfeletrico.app" rel="noopener noreferrer" target="_blank">
-            <svg class="lucide lucide-play h-4 w-4 fill-current" data-loc="client/src/pages/Home.tsx:677" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-             <polygon points="6 3 20 12 6 21 6 3">
-             </polygon>
-            </svg>
-            Instalar o app primeiro
-           </a>
-          </div>
-         </div>
-        </div>
-       </div>
-      </div>
-     </section>
-     <section class="container py-16" data-loc="client/src/pages/Home.tsx:688" id="faq">
-      <div class="mx-auto max-w-2xl text-center" data-loc="client/src/pages/Home.tsx:689" style="opacity: 0; transform: translateY(24px);">
-       <p class="font-display inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-[#38bdf8]" data-loc="client/src/pages/Home.tsx:690">
-        <svg class="lucide lucide-circle-help h-4 w-4" data-loc="client/src/pages/Home.tsx:691" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-         <circle cx="12" cy="12" r="10">
-         </circle>
-         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3">
-         </path>
-         <path d="M12 17h.01">
-         </path>
-        </svg>
-        Perguntas frequentes
-       </p>
-       <h2 class="font-display mt-2 text-3xl font-bold text-white sm:text-4xl" data-loc="client/src/pages/Home.tsx:694">
-        Dúvidas comuns sobre o simulador
-       </h2>
-       <p class="mt-3 text-muted-foreground" data-loc="client/src/pages/Home.tsx:697">
-        Não achou a resposta que procurava? Escreva para
-        <a class="text-[#7dd3fc] underline-offset-4 hover:underline" data-loc="client/src/pages/Home.tsx:699" data-manus_click_id="18" data-manus_clickable="true" href="mailto:jsfeletrico@gmail.com?subject=Contato%20pelo%20site%20jsfeletrico.com&amp;body=Ol%C3%A1%2C%20Joelson!%0A%0A">
-         jsfeletrico@gmail.com
-        </a>
-        .
-       </p>
-      </div>
-      <div class="mx-auto mt-10 max-w-3xl" data-loc="client/src/pages/Home.tsx:705" style="opacity: 0; transform: translateY(24px);">
-       <div class="space-y-3" data-loc="client/src/pages/Home.tsx:706" data-orientation="vertical" data-slot="accordion">
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_1_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="19" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_0_" type="button">
-           O JSF Elétrico é gratuito?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_0_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_1_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_3_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="20" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_2_" type="button">
-           Preciso de internet para usar o aplicativo?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_2_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_3_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_5_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="21" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_4_" type="button">
-           Quais componentes estão disponíveis no simulador?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_4_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_5_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_7_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="22" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_6_" type="button">
-           Como funciona o acesso ao simulador online do site?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_6_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_7_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_9_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="23" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_8_" type="button">
-           O simulador serve para estudar para provas e cursos técnicos?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_8_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_9_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_b_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="24" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_a_" type="button">
-           Posso salvar e imprimir meus diagramas?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_a_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_b_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_d_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="25" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_c_" type="button">
-           O aplicativo coleta meus dados?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_c_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_d_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-        <div class="last:border-b-0 jsf-panel border-b-0 px-5" data-loc="client/src/pages/Home.tsx:708" data-orientation="vertical" data-slot="accordion-item" data-state="closed">
-         <h3 class="flex" data-loc="client/src/components/ui/accordion.tsx:32" data-orientation="vertical" data-state="closed">
-          <button aria-controls="radix-_r_f_" aria-expanded="false" class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&amp;[data-state=open]&gt;svg]:rotate-180 py-4 text-left font-display text-base font-semibold text-white hover:no-underline" data-loc="client/src/pages/Home.tsx:713" data-manus_click_id="26" data-manus_clickable="true" data-orientation="vertical" data-radix-collection-item="" data-slot="accordion-trigger" data-state="closed" id="radix-_r_e_" type="button">
-           O JSF Elétrico está disponível para iPhone (iOS)?
-           <svg class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" data-loc="client/src/components/ui/accordion.tsx:42" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="m6 9 6 6 6-6">
-            </path>
-           </svg>
-          </button>
-         </h3>
-         <div aria-labelledby="radix-_r_e_" class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm" data-loc="client/src/pages/Home.tsx:716" data-orientation="vertical" data-slot="accordion-content" data-state="closed" hidden="" id="radix-_r_f_" role="region" style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);">
-         </div>
-        </div>
-       </div>
-      </div>
-     </section>
-     <section class="relative overflow-hidden jsf-splash-gradient py-20" data-loc="client/src/pages/Home.tsx:726" id="contato">
-      <div class="container relative text-center" data-loc="client/src/pages/Home.tsx:727">
-       <div class="mx-auto max-w-2xl" data-loc="client/src/pages/Home.tsx:728" style="opacity: 0; transform: translateY(24px);">
-        <img alt="Ícone do JSF Elétrico" class="mx-auto h-20 w-20 rounded-2xl border border-white/20 shadow-2xl" data-loc="client/src/pages/Home.tsx:729" src="/manus-storage/icone_app_cdd01151.png"/>
-        <h2 class="font-display mt-6 text-3xl font-bold text-white sm:text-4xl" data-loc="client/src/pages/Home.tsx:734">
-         Pronto para energizar seus estudos?
-        </h2>
-        <p class="mt-4 text-[#b0c4de]" data-loc="client/src/pages/Home.tsx:737">
-         Baixe o JSF Elétrico na Play Store e comece a montar seus primeiros comandos elétricos hoje mesmo.
-        </p>
-        <div class="mt-8 flex flex-wrap items-center justify-center gap-4" data-loc="client/src/pages/Home.tsx:741">
-         <a class="glow-pulse inline-flex items-center gap-2.5 rounded-xl bg-[#28a745] px-8 py-4 text-base font-bold text-white shadow-xl transition hover:brightness-110" data-loc="client/src/pages/Home.tsx:742" data-manus_click_id="27" data-manus_clickable="true" href="https://play.google.com/store/apps/details?id=com.jsfeletrico.app" rel="noopener noreferrer" target="_blank">
-          <svg class="lucide lucide-play h-5 w-5 fill-current" data-loc="client/src/pages/Home.tsx:748" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <polygon points="6 3 20 12 6 21 6 3">
-           </polygon>
-          </svg>
-          Baixar na Play Store
-         </a>
-         <a class="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/5 px-6 py-4 text-base font-semibold text-white backdrop-blur transition hover:bg-white/10" data-loc="client/src/pages/Home.tsx:751" data-manus_click_id="28" data-manus_clickable="true" href="mailto:jsfeletrico@gmail.com?subject=Contato%20pelo%20site%20jsfeletrico.com&amp;body=Ol%C3%A1%2C%20Joelson!%0A%0A">
-          <svg class="lucide lucide-mail h-5 w-5" data-loc="client/src/pages/Home.tsx:755" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-           <rect height="16" rx="2" width="20" x="2" y="4">
-           </rect>
-           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7">
-           </path>
-          </svg>
-          jsfeletrico@gmail.com
-         </a>
-        </div>
-       </div>
-      </div>
-     </section>
-    </main>
-    <footer class="border-t border-[#166184]/40 bg-[#07131d]" data-loc="client/src/pages/Home.tsx:765">
-     <div aria-hidden="true" class="flex items-center gap-2 container pt-6" data-loc="client/src/pages/Home.tsx:268">
-      <span class="terminal-dot" data-loc="client/src/pages/Home.tsx:269">
-      </span>
-      <span class="fio fio-fase flex-1" data-loc="client/src/pages/Home.tsx:270">
-      </span>
-      <span class="terminal-dot dot-cyan" data-loc="client/src/pages/Home.tsx:271">
-      </span>
-      <span class="fio fio-neutro flex-1" data-loc="client/src/pages/Home.tsx:272">
-      </span>
-      <span class="terminal-dot dot-green" data-loc="client/src/pages/Home.tsx:273">
-      </span>
-     </div>
-     <div class="container flex flex-col items-center gap-6 py-8 md:flex-row md:justify-between" data-loc="client/src/pages/Home.tsx:767">
-      <div class="flex items-center gap-3" data-loc="client/src/pages/Home.tsx:768">
-       <img alt="Logotipo do JSF Elétrico" class="h-9 w-9 rounded-lg" data-loc="client/src/pages/Home.tsx:769" src="/manus-storage/icone_app_cdd01151.png"/>
-       <div data-loc="client/src/pages/Home.tsx:770">
-        <p class="font-display text-sm font-bold text-white" data-loc="client/src/pages/Home.tsx:771">
-         JSF Elétrico
-        </p>
-        <p class="text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:772">
-         Simulador de comandos elétricos · www.jsfeletrico.com
-        </p>
-       </div>
-      </div>
-      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground" data-loc="client/src/pages/Home.tsx:777">
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:778" data-manus_click_id="29" data-manus_clickable="true" href="/sobre">
-        Sobre
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:781" data-manus_click_id="30" data-manus_clickable="true" href="https://play.google.com/store/apps/details?id=com.jsfeletrico.app" rel="noopener noreferrer" target="_blank">
-        Play Store
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:789" data-manus_click_id="31" data-manus_clickable="true" href="mailto:jsfeletrico@gmail.com?subject=Contato%20pelo%20site%20jsfeletrico.com&amp;body=Ol%C3%A1%2C%20Joelson!%0A%0A">
-        jsfeletrico@gmail.com
-       </a>
-       <a class="transition hover:text-white" data-loc="client/src/pages/Home.tsx:792" data-manus_click_id="32" data-manus_clickable="true" href="https://sites.google.com/view/jfpolitica-de-privacidade-/in%C3%ADcio" rel="noopener noreferrer" target="_blank">
-        Política de privacidade
-       </a>
-      </div>
-     </div>
-     <div class="border-t border-white/5 py-4 text-center text-xs text-muted-foreground/70" data-loc="client/src/pages/Home.tsx:802">
-      © 2026 JSF Elétrico · Desenvolvido por Joelson da Silva Francisco
-     </div>
     </footer>
-   </div>
-  </div>
-  <manus-content-root>
-  </manus-content-root>
- </body>
- <div data-manus-selector-input="true" id="manus-previewer-root">
- </div>
+</body>
 </html>
