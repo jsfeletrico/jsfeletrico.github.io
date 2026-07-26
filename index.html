@@ -1984,6 +1984,137 @@ window.addEventListener('unhandledrejection', function(evento) {
 	  animation: piscarSinaleiro 0.5s step-end infinite;
 	}
 
+        /* v117.1: Tutorial Onboarding */
+        #modal-tutorial {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 200000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        #modal-tutorial .tutorial-container {
+            width: 92%; max-width: 400px;
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 24px;
+            padding: 24px;
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+        #modal-tutorial .tutorial-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        #modal-tutorial .tutorial-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffc107;
+            margin: 0;
+        }
+        #modal-tutorial .tutorial-counter {
+            font-size: 12px;
+            color: #666;
+        }
+        #modal-tutorial .tutorial-step-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #1a2a6c, #166184);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 14px;
+        }
+        #modal-tutorial .tutorial-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        #modal-tutorial .tutorial-text {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 80px;
+        }
+        #modal-tutorial .tutorial-illustration {
+            width: 100%;
+            height: 140px;
+            background: #16213e;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            border: 1px solid #2a2a2a;
+        }
+        #modal-tutorial .tutorial-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        #modal-tutorial .tutorial-dots {
+            display: flex;
+            gap: 6px;
+            flex: 1;
+            justify-content: center;
+        }
+        #modal-tutorial .tutorial-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #333;
+            transition: background 0.3s;
+        }
+        #modal-tutorial .tutorial-dot.active {
+            background: #ffc107;
+        }
+        #modal-tutorial .tutorial-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #modal-tutorial .tutorial-btn-prev {
+            background: #2a2a2a;
+            color: #94a3b8;
+        }
+        #modal-tutorial .tutorial-btn-prev:hover {
+            background: #333;
+        }
+        #modal-tutorial .tutorial-btn-next {
+            background: #ffc107;
+            color: #1a1a1a;
+        }
+        #modal-tutorial .tutorial-btn-next:hover {
+            background: #ffd43b;
+        }
+        #modal-tutorial .tutorial-btn-skip {
+            background: transparent;
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+            text-decoration: underline;
+        }
+        #modal-tutorial .tutorial-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
         /* v117.0: Etiqueta "Em desenvolvimento" sobre componentes novos */
         .badge-em-desenvolvimento {
             position: absolute;
@@ -2706,6 +2837,8 @@ window.addEventListener('unhandledrejection', function(evento) {
 <button id="btn-add-borne" style="border-top: 1px solid #254457;"><div class="cor-preview" style="background:#ff4444; border:1px solid #ffffff;"></div> Colocar Borne</button>
 </div>
 <div class="dropdown-opcoes" id="dropdown-opcoes">
+<button id="btn-tutorial">📚 Tutorial</button>
+<button id="btn-exemplos">🔌 Exemplos Prontos</button>
 <button id="btn-abrir-manual">📖 Manual de Uso</button>
 <button id="btn-mudar-fundo">🖼️ Plano de Fundo</button>
 <button id="btn-exportar">📤 Salvar no Dispositivo</button>
@@ -2746,6 +2879,40 @@ window.addEventListener('unhandledrejection', function(evento) {
 </div>
 <!-- FIX: Toast de feedback para modo simulação -->
 <div id="toast-aviso"></div>
+<!-- Modal Tutorial Onboarding -->
+<div id="modal-tutorial">
+<div class="tutorial-container">
+<div class="tutorial-header">
+<h3>📚 Tutorial</h3>
+<span class="tutorial-counter" id="tutorial-counter">1/8</span>
+</div>
+<div class="tutorial-step-icon" id="tutorial-icon">👋</div>
+<div class="tutorial-title" id="tutorial-title">Bem-vindo!</div>
+<div class="tutorial-text" id="tutorial-text">Carregando...</div>
+<div class="tutorial-illustration" id="tutorial-illustration">⚡</div>
+<div class="tutorial-nav">
+<button class="tutorial-btn tutorial-btn-prev" id="tutorial-prev">◀ Voltar</button>
+<div class="tutorial-dots" id="tutorial-dots"></div>
+<button class="tutorial-btn tutorial-btn-next" id="tutorial-next">Avançar ▶</button>
+</div>
+<div class="tutorial-footer">
+<button class="tutorial-btn tutorial-btn-skip" id="tutorial-skip">Pular tutorial</button>
+</div>
+</div>
+</div>
+
+<!-- Modal Exemplos Prontos -->
+<div id="modal-exemplos" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200001;">
+<div style="width: 92%; max-width: 400px; background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 24px; padding: 24px; color: white; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+<h3 style="font-size: 16px; font-weight: 700; color: #ffc107; margin: 0;">🔌 Exemplos Prontos</h3>
+<button id="btn-fechar-exemplos" style="background: #2a2a2a; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; padding: 6px 12px; border-radius: 8px;">✕</button>
+</div>
+<p style="font-size: 12px; color: #666; margin-bottom: 16px; text-align: center;">Selecione um circuito pronto para carregar na área de desenho. O diagrama atual será substituído.</p>
+<div id="lista-exemplos" style="display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto;"></div>
+</div>
+</div>
+
 <!-- Modal de Impressão -->
 <div id="modal-impressao" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100005;">
 <div class="modal-container" style="max-width: 450px; background: #1a1f26; border: 1px solid #2d3748; border-radius: 20px; padding: 25px;">
@@ -12370,26 +12537,309 @@ desenho.appendChild(el);
             document.getElementById("dropdown-opcoes").style.display = "none"; // Fecha o menu de config
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            // Os eventos já são atribuídos via addEventListener em outras partes do código,
-            // mas manteremos aqui apenas se necessário. No entanto, para evitar conflitos
-            // com o que já corrigimos, vamos garantir que chamem a função correta.
-            const btnConf = document.getElementById("btn-modal-confirmar");
-            if(btnConf) btnConf.onclick = confirmarTempoTemporizador;
-            
-            const btnCanc = document.getElementById("btn-modal-cancelar");
-            if(btnCanc) btnCanc.onclick = fecharModalTempoTemporizador;
-            
-            const modal = document.getElementById("modal-tempo-temporizador");
-            if(modal) {
-                modal.onclick = (e) => {
-                    if (e.target === modal) fecharModalTempoTemporizador();
-                };
+        // ===================== v117.1: TUTORIAL ONBOARDING =====================
+        const passosTutorial = [
+            {
+                icon: "👋",
+                titulo: "Bem-vindo ao JSF Elétrico!",
+                texto: "Este simulador permite montar e testar circuitos elétricos diretamente no seu dispositivo. Vamos mostrar o básico em poucos passos.",
+                ilustracao: "⚡"
+            },
+            {
+                icon: "📦",
+                titulo: "Adicionar Componentes",
+                texto: "Toque no botão '📦 Comp.' para abrir a biblioteca de componentes. Escolha o tipo desejado e toque em 'Inserir'. Depois toque na tela para posicionar.",
+                ilustracao: "🧩"
+            },
+            {
+                icon: "🔗",
+                titulo: "Ligar Fios",
+                texto: "Toque no botão '🔗 Fio', escolha a cor do cabo e toque no borne de origem. Depois toque no borne de destino. O fio é ligado automaticamente!",
+                ilustracao: "〰️"
+            },
+            {
+                icon: "👆",
+                titulo: "Mover Componentes",
+                texto: "Desative o modo Fio, toque sobre o componente e arraste para reposicioná-lo. Você também pode girar com o botão '🔄 Girar'.",
+                ilustracao: "↕️"
+            },
+            {
+                icon: "👆👆",
+                titulo: "Menu de Contexto",
+                texto: "Dê duplo clique (ou toque longo) sobre um componente para abrir o menu: editar tag, duplicar, excluir, fixar e configurar parâmetros.",
+                ilustracao: "⚙️"
+            },
+            {
+                icon: "▶",
+                titulo: "Simular o Circuito",
+                texto: "Toque em '▶ Simular' para testar o circuito. Fios vermelhos indicam fase energizada, azuis indicam neutro. A lógica dos componentes é avaliada em tempo real.",
+                ilustracao: "🟡"
+            },
+            {
+                icon: "🔌",
+                titulo: "Exemplos Prontos",
+                texto: "No menu '⚙️ Cfg', use '🔌 Exemplos Prontos' para carregar circuitos de exemplo como Partida Direta, Estrela-Triângulo e outros.",
+                ilustracao: "🔧"
+            },
+            {
+                icon: "✅",
+                titulo: "Pronto para começar!",
+                texto: "Agora você conhece o básico. Explore a biblioteca de componentes, pratique com os exemplos e monte seus próprios circuitos!",
+                ilustracao: "🎉"
             }
+        ];
+
+        let passoTutorialAtual = 0;
+
+        function renderizarPassoTutorial() {
+            const passo = passosTutorial[passoTutorialAtual];
+            document.getElementById("tutorial-icon").textContent = passo.icon;
+            document.getElementById("tutorial-title").textContent = passo.titulo;
+            document.getElementById("tutorial-text").textContent = passo.texto;
+            document.getElementById("tutorial-illustration").textContent = passo.ilustracao;
+            document.getElementById("tutorial-counter").textContent = `${passoTutorialAtual + 1}/${passosTutorial.length}`;
+            
+            // Atualizar dots
+            const dotsContainer = document.getElementById("tutorial-dots");
+            dotsContainer.innerHTML = "";
+            passosTutorial.forEach((_, i) => {
+                const dot = document.createElement("div");
+                dot.className = "tutorial-dot" + (i === passoTutorialAtual ? " active" : "");
+                dotsContainer.appendChild(dot);
+            });
+
+            // Atualizar botões
+            document.getElementById("tutorial-prev").style.visibility = passoTutorialAtual === 0 ? "hidden" : "visible";
+            document.getElementById("tutorial-next").textContent = passoTutorialAtual === passosTutorial.length - 1 ? "Concluir ✓" : "Avançar ▶";
+        }
+
+        function abrirTutorial() {
+            passoTutorialAtual = 0;
+            renderizarPassoTutorial();
+            document.getElementById("modal-tutorial").style.display = "flex";
+            document.getElementById("dropdown-opcoes").style.display = "none";
+        }
+
+        function fecharTutorial() {
+            document.getElementById("modal-tutorial").style.display = "none";
+            try { localStorage.setItem("jsf-tutorial-visto", "true"); } catch(e) {}
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Tutorial navigation
+            document.getElementById("tutorial-next").addEventListener("click", () => {
+                if (passoTutorialAtual < passosTutorial.length - 1) {
+                    passoTutorialAtual++;
+                    renderizarPassoTutorial();
+                } else {
+                    fecharTutorial();
+                }
+            });
+            document.getElementById("tutorial-prev").addEventListener("click", () => {
+                if (passoTutorialAtual > 0) {
+                    passoTutorialAtual--;
+                    renderizarPassoTutorial();
+                }
+            });
+            document.getElementById("tutorial-skip").addEventListener("click", fecharTutorial);
+            document.getElementById("modal-tutorial").addEventListener("click", (e) => {
+                if (e.target === document.getElementById("modal-tutorial")) fecharTutorial();
+            });
+
+            // Tutorial button
+            const btnTutorial = document.getElementById("btn-tutorial");
+            if (btnTutorial) btnTutorial.onclick = abrirTutorial;
 
             // Ativa o botão do manual
             const btnManual = document.getElementById("btn-abrir-manual");
             if(btnManual) btnManual.onclick = abrirManual;
+
+            // Mostrar tutorial na primeira vez
+            try {
+                if (!localStorage.getItem("jsf-tutorial-visto")) {
+                    setTimeout(() => {
+                        abrirTutorial();
+                    }, 1500);
+                }
+            } catch(e) {}
+        });
+
+        // ===================== v117.1: EXEMPLOS PRONTOS =====================
+        function obterExemplosProntos() {
+            return [
+                {
+                    nome: "Partida Direta",
+                    descricao: "Motor trifásico com botoeira Liga NF e Selo, contato auxiliar, contatora, relé térmico e botoeira Desliga NF.",
+                    icon: "⚡",
+                    componentes: [
+                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
+                        { tipo: "contato-na", tag: "S1", x: 180, y: 60, rot: 0 },
+                        { tipo: "contato-na", tag: "K1 13-14", x: 180, y: 180, rot: 0 },
+                        { tipo: "botoeira-liga-trava", tag: "S0", x: 60, y: 180, rot: 0 },
+                        { tipo: "contato-nf", tag: "S2", x: 300, y: 180, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
+                        { tipo: "rele-termico", tag: "F1", x: 420, y: 120, rot: 0 },
+                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
+                        { tipo: "motor-trifasico-pe", tag: "M1", x: 380, y: 340, rot: 0 }
+                    ],
+                    conexoes: [
+                        { tipo: "cabo-fase", cor: "#dc3545", pontos: [
+                            { x: 60, y: 60 }, { x: 180, y: 60 }, { x: 300, y: 60 }
+                        ]},
+                        { tipo: "cabo-fase", cor: "#dc3545", pontos: [
+                            { x: 180, y: 60 }, { x: 180, y: 180 }
+                        ]},
+                        { tipo: "cabo-fase", cor: "#dc3545", pontos: [
+                            { x: 180, y: 180 }, { x: 300, y: 180 }
+                        ]}
+                    ]
+                },
+                {
+                    nome: "Estrela-Triângulo",
+                    descricao: "Partida Estrela-Triângulo com temporizadores, 3 contatores (K1, K2 Estrela, K3 Triângulo) e relé térmico.",
+                    icon: "🔺",
+                    componentes: [
+                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
+                        { tipo: "botoeira-liga-trava", tag: "S0", x: 180, y: 60, rot: 0 },
+                        { tipo: "botoeira-desliga-trava", tag: "S1", x: 180, y: 180, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K2", x: 300, y: 180, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K3", x: 420, y: 60, rot: 0 },
+                        { tipo: "temporizador-liga", tag: "KT1", x: 420, y: 180, rot: 0 },
+                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K1", x: 200, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K2", x: 320, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K3", x: 440, y: 340, rot: 0 },
+                        { tipo: "motor-6-bornes", tag: "M1", x: 560, y: 340, rot: 0 }
+                    ],
+                    conexoes: []
+                },
+                {
+                    nome: "Reversão de Motor",
+                    descricao: "Comando para inverter o sentido de rotação de um motor trifásico com 2 contatores e intertravamento.",
+                    icon: "🔄",
+                    componentes: [
+                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
+                        { tipo: "botoeira-liga-trava", tag: "Horário", x: 180, y: 60, rot: 0 },
+                        { tipo: "botoeira-liga-trava", tag: "Anti-Hor", x: 180, y: 180, rot: 0 },
+                        { tipo: "botoeira-desliga-trava", tag: "S1", x: 300, y: 120, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K1", x: 420, y: 60, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K2", x: 420, y: 180, rot: 0 },
+                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K2", x: 380, y: 340, rot: 0 },
+                        { tipo: "motor-trifasico-pe", tag: "M1", x: 540, y: 340, rot: 0 }
+                    ],
+                    conexoes: []
+                },
+                {
+                    nome: "Sensor Indutivo + Contator",
+                    descricao: "Sensor indutivo detectando objeto e acionando uma contatora para partida de motor via comando.",
+                    icon: "📡",
+                    componentes: [
+                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
+                        { tipo: "sensor-indutivo", tag: "S1", x: 180, y: 60, rot: 0 },
+                        { tipo: "contato-na", tag: "S1", x: 180, y: 180, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
+                        { tipo: "sinaleiro-luz", tag: "H1", x: 300, y: 180, rot: 0 },
+                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
+                        { tipo: "motor-trifasico-pe", tag: "M1", x: 380, y: 340, rot: 0 }
+                    ],
+                    conexoes: []
+                },
+                {
+                    nome: "Circuito com Temporizador",
+                    descricao: "Temporizador liga-desliga controlando uma contatora e sinaleiro intermitente após acionamento.",
+                    icon: "⏱️",
+                    componentes: [
+                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
+                        { tipo: "botoeira-liga-trava", tag: "S0", x: 180, y: 60, rot: 0 },
+                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
+                        { tipo: "temporizador-liga", tag: "KT1", x: 300, y: 180, rot: 0 },
+                        { tipo: "sinaleiro-intermitente", tag: "H1", x: 420, y: 60, rot: 0 },
+                        { tipo: "sinaleiro-luz", tag: "H2", x: 420, y: 180, rot: 0 },
+                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
+                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
+                        { tipo: "motor-trifasico-pe", tag: "M1", x: 380, y: 340, rot: 0 }
+                    ],
+                    conexoes: []
+                }
+            ];
+        }
+
+        function abrirExemplos() {
+            const lista = document.getElementById("lista-exemplos");
+            const exemplos = obterExemplosProntos();
+            lista.innerHTML = "";
+
+            exemplos.forEach((ex, i) => {
+                const card = document.createElement("div");
+                card.style.cssText = "background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;";
+                card.onmouseenter = () => { card.style.borderColor = "#ffc107"; card.style.background = "#1f1f1f"; };
+                card.onmouseleave = () => { card.style.borderColor = "#2a2a2a"; card.style.background = "#1a1a1a"; };
+                card.onclick = () => carregarExemplo(i);
+
+                card.innerHTML = `
+                    <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #1a2a6c, #166184); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">${ex.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px;">${ex.nome}</div>
+                        <div style="font-size: 11px; color: #666; line-height: 1.4;">${ex.descricao}</div>
+                    </div>
+                    <div style="font-size: 12px; color: #ffc107;">▶</div>
+                `;
+                lista.appendChild(card);
+            });
+
+            document.getElementById("modal-exemplos").style.display = "flex";
+            document.getElementById("dropdown-opcoes").style.display = "none";
+        }
+
+        function carregarExemplo(indice) {
+            const exemplos = obterExemplosProntos();
+            const ex = exemplos[indice];
+            if (!ex) return;
+
+            // Confirmação antes de substituir
+            const overlay = document.getElementById("custom-modal-overlay");
+            const container = overlay.querySelector(".modal-container");
+            if (!overlay) return;
+
+            container.innerHTML = `
+                <h2 style="color: #ffc107;">⚠️ Carregar Exemplo</h2>
+                <p style="color: #94a3b8; font-size: 14px; line-height: 1.5; margin: 16px 0;">Carregar o exemplo <b>"${ex.nome}"</b> vai substituir o diagrama atual. Deseja continuar?</p>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="modal-btn modal-btn-cancel" id="btn-cancel-ex" style="flex: 1;">Cancelar</button>
+                    <button class="modal-btn modal-btn-ok" id="btn-confirm-ex" style="flex: 1;">Carregar</button>
+                </div>
+            `;
+            overlay.style.display = "flex";
+            document.getElementById("modal-exemplos").style.display = "none";
+
+            document.getElementById("btn-cancel-ex").onclick = () => {
+                overlay.style.display = "none";
+            };
+            document.getElementById("btn-confirm-ex").onclick = () => {
+                overlay.style.display = "none";
+                aplicarDiagramaPronto(ex.componentes, ex.conexoes, 0, 0, 1);
+                mostrarToast(`Exemplo "${ex.nome}" carregado com sucesso!`);
+            };
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnExemplos = document.getElementById("btn-exemplos");
+            if (btnExemplos) btnExemplos.onclick = abrirExemplos;
+
+            const btnFecharExemplos = document.getElementById("btn-fechar-exemplos");
+            if (btnFecharExemplos) btnFecharExemplos.onclick = () => {
+                document.getElementById("modal-exemplos").style.display = "none";
+            };
+            document.getElementById("modal-exemplos").addEventListener("click", (e) => {
+                if (e.target === document.getElementById("modal-exemplos")) {
+                    document.getElementById("modal-exemplos").style.display = "none";
+                }
+            });
         });
 
     </script>
@@ -12444,6 +12894,8 @@ desenho.appendChild(el);
             }
 
             const telasPrioritarias = [
+                'modal-tutorial',
+                'modal-exemplos',
                 'modal-legal-container',
                 'menu-sobre-container',
                 'custom-modal-overlay',
