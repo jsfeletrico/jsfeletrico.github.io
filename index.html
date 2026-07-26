@@ -1984,135 +1984,160 @@ window.addEventListener('unhandledrejection', function(evento) {
 	  animation: piscarSinaleiro 0.5s step-end infinite;
 	}
 
-        /* v117.1: Tutorial Onboarding */
+        /* v117.1: Tutorial Onboarding - Visual Chamativo */
         #modal-tutorial {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
+            background: linear-gradient(135deg, rgba(10, 20, 60, 0.95), rgba(30, 10, 60, 0.95));
+            backdrop-filter: blur(12px);
             z-index: 200000;
             align-items: center;
             justify-content: center;
             flex-direction: column;
         }
         #modal-tutorial .tutorial-container {
-            width: 92%; max-width: 400px;
-            background: #0f0f0f;
-            border: 1px solid #2a2a2a;
-            border-radius: 24px;
-            padding: 24px;
+            width: 90%; max-width: 380px;
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 28px;
+            padding: 28px 22px;
             color: white;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            box-shadow: 0 0 40px rgba(255, 193, 7, 0.15), 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        #modal-tutorial .tutorial-container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffc107, #ff6b35, #e74c3c, #3b82f6, #ffc107);
         }
         #modal-tutorial .tutorial-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
         #modal-tutorial .tutorial-header h3 {
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 17px;
+            font-weight: 800;
             color: #ffc107;
             margin: 0;
+            text-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
         }
         #modal-tutorial .tutorial-counter {
-            font-size: 12px;
-            color: #666;
+            font-size: 13px;
+            font-weight: 700;
+            color: #e0e0e0;
+            background: rgba(255, 193, 7, 0.15);
+            padding: 3px 10px;
+            border-radius: 12px;
         }
         #modal-tutorial .tutorial-step-icon {
-            width: 48px; height: 48px;
-            background: linear-gradient(135deg, #1a2a6c, #166184);
-            border-radius: 14px;
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin: 0 auto 14px;
+            font-size: 28px;
+            margin: 0 auto 16px;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
         }
         #modal-tutorial .tutorial-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #fff;
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffffff;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            line-height: 1.3;
         }
         #modal-tutorial .tutorial-text {
-            font-size: 13px;
-            color: #94a3b8;
-            line-height: 1.6;
+            font-size: 14px;
+            color: #d4d4d4;
+            line-height: 1.7;
             text-align: center;
-            margin-bottom: 20px;
-            min-height: 80px;
+            margin-bottom: 18px;
+            min-height: 90px;
+            font-weight: 500;
         }
         #modal-tutorial .tutorial-illustration {
             width: 100%;
-            height: 140px;
-            background: #16213e;
-            border-radius: 12px;
-            margin-bottom: 16px;
+            height: 130px;
+            background: linear-gradient(135deg, #0d1b2a, #1b2838);
+            border-radius: 16px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            border: 1px solid #2a2a2a;
+            font-size: 52px;
+            border: 2px solid rgba(255, 193, 7, 0.2);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
         }
         #modal-tutorial .tutorial-nav {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
             justify-content: center;
         }
         #modal-tutorial .tutorial-dots {
             display: flex;
-            gap: 6px;
+            gap: 7px;
             flex: 1;
             justify-content: center;
         }
         #modal-tutorial .tutorial-dot {
-            width: 8px; height: 8px;
+            width: 10px; height: 10px;
             border-radius: 50%;
-            background: #333;
-            transition: background 0.3s;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
         }
         #modal-tutorial .tutorial-dot.active {
             background: #ffc107;
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+            transform: scale(1.2);
         }
         #modal-tutorial .tutorial-btn {
-            padding: 10px 24px;
+            padding: 11px 26px;
             border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.2s;
+            letter-spacing: 0.3px;
         }
         #modal-tutorial .tutorial-btn-prev {
-            background: #2a2a2a;
-            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
         #modal-tutorial .tutorial-btn-prev:hover {
-            background: #333;
+            background: rgba(255, 255, 255, 0.2);
         }
         #modal-tutorial .tutorial-btn-next {
-            background: #ffc107;
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
             color: #1a1a1a;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
         }
         #modal-tutorial .tutorial-btn-next:hover {
-            background: #ffd43b;
+            background: linear-gradient(135deg, #ffd43b, #ff9a00);
+            transform: translateY(-1px);
         }
         #modal-tutorial .tutorial-btn-skip {
             background: transparent;
-            color: #666;
+            color: #999;
             font-size: 12px;
-            margin-top: 10px;
+            margin-top: 12px;
             text-decoration: underline;
+            font-weight: 500;
         }
         #modal-tutorial .tutorial-footer {
             display: flex;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         /* v117.0: Etiqueta "Em desenvolvimento" sobre componentes novos */
@@ -2838,7 +2863,6 @@ window.addEventListener('unhandledrejection', function(evento) {
 </div>
 <div class="dropdown-opcoes" id="dropdown-opcoes">
 <button id="btn-tutorial">📚 Tutorial</button>
-<button id="btn-exemplos">🔌 Exemplos Prontos</button>
 <button id="btn-abrir-manual">📖 Manual de Uso</button>
 <button id="btn-mudar-fundo">🖼️ Plano de Fundo</button>
 <button id="btn-exportar">📤 Salvar no Dispositivo</button>
@@ -2898,18 +2922,6 @@ window.addEventListener('unhandledrejection', function(evento) {
 <div class="tutorial-footer">
 <button class="tutorial-btn tutorial-btn-skip" id="tutorial-skip">Pular tutorial</button>
 </div>
-</div>
-</div>
-
-<!-- Modal Exemplos Prontos -->
-<div id="modal-exemplos" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200001;">
-<div style="width: 92%; max-width: 400px; background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 24px; padding: 24px; color: white; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-<h3 style="font-size: 16px; font-weight: 700; color: #ffc107; margin: 0;">🔌 Exemplos Prontos</h3>
-<button id="btn-fechar-exemplos" style="background: #2a2a2a; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; padding: 6px 12px; border-radius: 8px;">✕</button>
-</div>
-<p style="font-size: 12px; color: #666; margin-bottom: 16px; text-align: center;">Selecione um circuito pronto para carregar na área de desenho. O diagrama atual será substituído.</p>
-<div id="lista-exemplos" style="display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto;"></div>
 </div>
 </div>
 
@@ -12576,15 +12588,9 @@ desenho.appendChild(el);
                 ilustracao: "🟡"
             },
             {
-                icon: "🔌",
-                titulo: "Exemplos Prontos",
-                texto: "No menu '⚙️ Cfg', use '🔌 Exemplos Prontos' para carregar circuitos de exemplo como Partida Direta, Estrela-Triângulo e outros.",
-                ilustracao: "🔧"
-            },
-            {
                 icon: "✅",
                 titulo: "Pronto para começar!",
-                texto: "Agora você conhece o básico. Explore a biblioteca de componentes, pratique com os exemplos e monte seus próprios circuitos!",
+                texto: "Agora você conhece o básico. Explore a biblioteca de componentes e monte seus próprios circuitos!",
                 ilustracao: "🎉"
             }
         ];
@@ -12664,183 +12670,7 @@ desenho.appendChild(el);
             } catch(e) {}
         });
 
-        // ===================== v117.1: EXEMPLOS PRONTOS =====================
-        function obterExemplosProntos() {
-            return [
-                {
-                    nome: "Partida Direta",
-                    descricao: "Motor trifásico com botoeira Liga NF e Selo, contato auxiliar, contatora, relé térmico e botoeira Desliga NF.",
-                    icon: "⚡",
-                    componentes: [
-                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
-                        { tipo: "contato-na", tag: "S1", x: 180, y: 60, rot: 0 },
-                        { tipo: "contato-na", tag: "K1 13-14", x: 180, y: 180, rot: 0 },
-                        { tipo: "botoeira-liga-trava", tag: "S0", x: 60, y: 180, rot: 0 },
-                        { tipo: "contato-nf", tag: "S2", x: 300, y: 180, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
-                        { tipo: "rele-termico", tag: "F1", x: 420, y: 120, rot: 0 },
-                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
-                        { tipo: "motor-trifasico-pe", tag: "M1", x: 380, y: 340, rot: 0 }
-                    ],
-                    conexoes: [
-                        { tipo: "cabo-fase", cor: "#dc3545", pontos: [
-                            { x: 60, y: 60 }, { x: 180, y: 60 }, { x: 300, y: 60 }
-                        ]},
-                        { tipo: "cabo-fase", cor: "#dc3545", pontos: [
-                            { x: 180, y: 60 }, { x: 180, y: 180 }
-                        ]},
-                        { tipo: "cabo-fase", cor: "#dc3545", pontos: [
-                            { x: 180, y: 180 }, { x: 300, y: 180 }
-                        ]}
-                    ]
-                },
-                {
-                    nome: "Estrela-Triângulo",
-                    descricao: "Partida Estrela-Triângulo com temporizadores, 3 contatores (K1, K2 Estrela, K3 Triângulo) e relé térmico.",
-                    icon: "🔺",
-                    componentes: [
-                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
-                        { tipo: "botoeira-liga-trava", tag: "S0", x: 180, y: 60, rot: 0 },
-                        { tipo: "botoeira-desliga-trava", tag: "S1", x: 180, y: 180, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K2", x: 300, y: 180, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K3", x: 420, y: 60, rot: 0 },
-                        { tipo: "temporizador-liga", tag: "KT1", x: 420, y: 180, rot: 0 },
-                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K1", x: 200, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K2", x: 320, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K3", x: 440, y: 340, rot: 0 },
-                        { tipo: "motor-6-bornes", tag: "M1", x: 560, y: 340, rot: 0 }
-                    ],
-                    conexoes: []
-                },
-                {
-                    nome: "Reversão de Motor",
-                    descricao: "Comando para inverter o sentido de rotação de um motor trifásico com 2 contatores e intertravamento.",
-                    icon: "🔄",
-                    componentes: [
-                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
-                        { tipo: "botoeira-liga-trava", tag: "Horário", x: 180, y: 60, rot: 0 },
-                        { tipo: "botoeira-liga-trava", tag: "Anti-Hor", x: 180, y: 180, rot: 0 },
-                        { tipo: "botoeira-desliga-trava", tag: "S1", x: 300, y: 120, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K1", x: 420, y: 60, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K2", x: 420, y: 180, rot: 0 },
-                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K2", x: 380, y: 340, rot: 0 },
-                        { tipo: "motor-trifasico-pe", tag: "M1", x: 540, y: 340, rot: 0 }
-                    ],
-                    conexoes: []
-                },
-                {
-                    nome: "Sensor Indutivo + Contator",
-                    descricao: "Sensor indutivo detectando objeto e acionando uma contatora para partida de motor via comando.",
-                    icon: "📡",
-                    componentes: [
-                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
-                        { tipo: "sensor-indutivo", tag: "S1", x: 180, y: 60, rot: 0 },
-                        { tipo: "contato-na", tag: "S1", x: 180, y: 180, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
-                        { tipo: "sinaleiro-luz", tag: "H1", x: 300, y: 180, rot: 0 },
-                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
-                        { tipo: "motor-trifasico-pe", tag: "M1", x: 380, y: 340, rot: 0 }
-                    ],
-                    conexoes: []
-                },
-                {
-                    nome: "Circuito com Temporizador",
-                    descricao: "Temporizador liga-desliga controlando uma contatora e sinaleiro intermitente após acionamento.",
-                    icon: "⏱️",
-                    componentes: [
-                        { tipo: "rede-trifasica-n-pe", tag: "R", x: 60, y: 60, rot: 0 },
-                        { tipo: "botoeira-liga-trava", tag: "S0", x: 180, y: 60, rot: 0 },
-                        { tipo: "bobina-contatora", tag: "K1", x: 300, y: 60, rot: 0 },
-                        { tipo: "temporizador-liga", tag: "KT1", x: 300, y: 180, rot: 0 },
-                        { tipo: "sinaleiro-intermitente", tag: "H1", x: 420, y: 60, rot: 0 },
-                        { tipo: "sinaleiro-luz", tag: "H2", x: 420, y: 180, rot: 0 },
-                        { tipo: "disjuntor-tripolar", tag: "Q1", x: 60, y: 340, rot: 0 },
-                        { tipo: "contator-tripolar", tag: "K1", x: 220, y: 340, rot: 0 },
-                        { tipo: "motor-trifasico-pe", tag: "M1", x: 380, y: 340, rot: 0 }
-                    ],
-                    conexoes: []
-                }
-            ];
-        }
-
-        function abrirExemplos() {
-            const lista = document.getElementById("lista-exemplos");
-            const exemplos = obterExemplosProntos();
-            lista.innerHTML = "";
-
-            exemplos.forEach((ex, i) => {
-                const card = document.createElement("div");
-                card.style.cssText = "background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;";
-                card.onmouseenter = () => { card.style.borderColor = "#ffc107"; card.style.background = "#1f1f1f"; };
-                card.onmouseleave = () => { card.style.borderColor = "#2a2a2a"; card.style.background = "#1a1a1a"; };
-                card.onclick = () => carregarExemplo(i);
-
-                card.innerHTML = `
-                    <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #1a2a6c, #166184); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">${ex.icon}</div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px;">${ex.nome}</div>
-                        <div style="font-size: 11px; color: #666; line-height: 1.4;">${ex.descricao}</div>
-                    </div>
-                    <div style="font-size: 12px; color: #ffc107;">▶</div>
-                `;
-                lista.appendChild(card);
-            });
-
-            document.getElementById("modal-exemplos").style.display = "flex";
-            document.getElementById("dropdown-opcoes").style.display = "none";
-        }
-
-        function carregarExemplo(indice) {
-            const exemplos = obterExemplosProntos();
-            const ex = exemplos[indice];
-            if (!ex) return;
-
-            // Confirmação antes de substituir
-            const overlay = document.getElementById("custom-modal-overlay");
-            const container = overlay.querySelector(".modal-container");
-            if (!overlay) return;
-
-            container.innerHTML = `
-                <h2 style="color: #ffc107;">⚠️ Carregar Exemplo</h2>
-                <p style="color: #94a3b8; font-size: 14px; line-height: 1.5; margin: 16px 0;">Carregar o exemplo <b>"${ex.nome}"</b> vai substituir o diagrama atual. Deseja continuar?</p>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="modal-btn modal-btn-cancel" id="btn-cancel-ex" style="flex: 1;">Cancelar</button>
-                    <button class="modal-btn modal-btn-ok" id="btn-confirm-ex" style="flex: 1;">Carregar</button>
-                </div>
-            `;
-            overlay.style.display = "flex";
-            document.getElementById("modal-exemplos").style.display = "none";
-
-            document.getElementById("btn-cancel-ex").onclick = () => {
-                overlay.style.display = "none";
-            };
-            document.getElementById("btn-confirm-ex").onclick = () => {
-                overlay.style.display = "none";
-                aplicarDiagramaPronto(ex.componentes, ex.conexoes, 0, 0, 1);
-                mostrarToast(`Exemplo "${ex.nome}" carregado com sucesso!`);
-            };
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const btnExemplos = document.getElementById("btn-exemplos");
-            if (btnExemplos) btnExemplos.onclick = abrirExemplos;
-
-            const btnFecharExemplos = document.getElementById("btn-fechar-exemplos");
-            if (btnFecharExemplos) btnFecharExemplos.onclick = () => {
-                document.getElementById("modal-exemplos").style.display = "none";
-            };
-            document.getElementById("modal-exemplos").addEventListener("click", (e) => {
-                if (e.target === document.getElementById("modal-exemplos")) {
-                    document.getElementById("modal-exemplos").style.display = "none";
-                }
-            });
-        });
+        // v117.1: Exemplos Prontos removido a pedido do usuário
 
     </script>
 <script>
@@ -12895,7 +12725,6 @@ desenho.appendChild(el);
 
             const telasPrioritarias = [
                 'modal-tutorial',
-                'modal-exemplos',
                 'modal-legal-container',
                 'menu-sobre-container',
                 'custom-modal-overlay',
