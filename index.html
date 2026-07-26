@@ -1984,7 +1984,26 @@ window.addEventListener('unhandledrejection', function(evento) {
 	  animation: piscarSinaleiro 0.5s step-end infinite;
 	}
 
-	/* v117.0: Animação para Campainha Ativa (tremor/vibração) */
+        /* v117.0: Etiqueta "Em desenvolvimento" sobre componentes novos */
+        .badge-em-desenvolvimento {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 193, 7, 0.92);
+            color: #1a1a1a;
+            font-size: 7px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 25;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+
+        /* v117.0: Animação para Campainha Ativa (tremor/vibração) */
 	@keyframes tremerCampainha {
 	  0%, 100% { transform: translate(0, 0) rotate(0deg); }
 	  10% { transform: translate(-1px, -1px) rotate(-1deg); }
@@ -2127,6 +2146,22 @@ window.addEventListener('unhandledrejection', function(evento) {
         }
         .menu-contexto-comp button:active { background: #333; }
         .menu-contexto-comp .btn-ctx-del { color: #ff3b30; border-top: 1px solid #333; }
+        .ctx-observacao {
+            display: none;
+            background: rgba(255, 193, 7, 0.12);
+            border: 1px solid rgba(255, 193, 7, 0.35);
+            border-radius: 6px;
+            padding: 7px 10px;
+            margin: 6px 8px 4px;
+            font-size: 10px;
+            color: #ffc107;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .ctx-observacao::before {
+            content: "\26A0";
+            margin-right: 4px;
+        }
         .ctx-grupo-cor-piloto {
             display: none;
             flex-direction: column;
@@ -2691,6 +2726,7 @@ window.addEventListener('unhandledrejection', function(evento) {
 </div>
 <div class="menu-contexto-comp" id="menu-contexto">
 <div class="menu-contexto-titulo" id="ctx-nome-equipamento">EQUIPAMENTO</div>
+<div class="ctx-observacao" id="ctx-observacao" style="display:none;"></div>
 <button id="ctx-fixar">🔒 Fixar / Soltar</button>
 <button id="ctx-duplicar">📋 Duplicar</button>
 <button id="ctx-editar-tag">✏️ Editar Tag</button>
@@ -7338,11 +7374,21 @@ if (areaPrincipal) {
 			                    if ((comp.tipo === "disjuntor-tripolar" || comp.tipo === "disjuntor-motor" || comp.tipo === "disjuntor-motor-imagem") && comp.sobrecargaAtiva) {
 			                        el.classList.add("ativo");
 			                    }
-                // Componentes 24V queimados - ativar estilo piscante
+		                // Componentes 24V queimados - ativar estilo piscante
                 if (comp.queimado && (comp.tipo === "bobinaInterface24V" || comp.tipo === "sensor-indutivo" || comp.tipo === "sensor-capacitivo" || comp.tipo === "sensor-capacitivo-cilindrico" || comp.tipo === "valvula-5-2")) {
                     el.classList.add("queimado");
                     // Criar overlay HTML de QUEIMADO (idêntico ao EMERGÊNCIA da botoeira)
                     criarOverlayQueimado(el, comp);
+                }
+
+                // v117.0: Etiqueta fixa "Em desenvolvimento" para novos componentes
+                if (comp.tipo === "campainha" || comp.tipo === "chave-fim-de-curso" || comp.tipo === "pressostato") {
+                    corpo.style.position = "relative";
+                    const badge = document.createElement("div");
+                    badge.className = "badge-em-desenvolvimento";
+                    badge.textContent = "EM DESENVOLVIMENTO";
+                    badge.title = "Simbologia em aprimoramento";
+                    corpo.appendChild(badge);
                 }
 		                }
                 const eMotor = (comp.tipo === "motor-jsf-yy" || comp.tipo === "motor-trifasico-pe" || comp.tipo === "motor-6-bornes" || comp.tipo === "motor-dahlander");
@@ -8752,6 +8798,20 @@ desenho.appendChild(el);
             menuContexto.style.left = posX + "px";
             menuContexto.style.top = posY + "px";
             document.getElementById("ctx-nome-equipamento").textContent = comp.tag.toUpperCase();
+
+            // v117.0: Observação de desenvolvimento para novos componentes
+            const observacao = document.getElementById("ctx-observacao");
+            const tiposEmDesenvolvimento = {
+                "campainha": "Em desenvolvimento — simbologia em aprimoramento.",
+                "chave-fim-de-curso": "Em desenvolvimento — simbologia em aprimoramento.",
+                "pressostato": "Em desenvolvimento — simbologia em aprimoramento."
+            };
+            if (tiposEmDesenvolvimento[comp.tipo]) {
+                observacao.textContent = tiposEmDesenvolvimento[comp.tipo];
+                observacao.style.display = "block";
+            } else {
+                observacao.style.display = "none";
+            }
 
             const grupoCorPiloto = document.getElementById("ctx-cor-piloto");
             const btnManual = document.getElementById("ctx-manual");
