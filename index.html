@@ -4554,9 +4554,9 @@ function abrirPainelConfiguracao(comp) {
         }
 
         function gerarCaminhoOrtogonal(p1, p2, desvio = 0, info1 = null, info2 = null) {
-            // Roteamento em malha fixa: todas as quebras ficam em linhas horizontais
-            // e verticais constantes. O objetivo é parar de "caçar" desvios grandes
-            // quando o usuário aproxima ou afasta componentes.
+            // v117.3: Roteamento ortogonal por lado do borne — GARANTIA DE SAÍDA RETA
+            // Regra: o fio SEMPRE sai perpendicular ao borne (distância de segurança)
+            // antes de virar. Nunca vira em cima do borne.
             const s1 = { x: p1.x, y: p1.y };
             const s2 = { x: p2.x, y: p2.y };
             const dx = s2.x - s1.x;
@@ -4567,40 +4567,42 @@ function abrirPainelConfiguracao(comp) {
             const lado2 = info2 ? info2.lado : "meio";
 
             const PASSO_MALHA = 20;
-            const SAIDA_BORNE = 20;
-            // Reduz o desvio de pista nos primeiros pixels para garantir saída reta
+            const SAIDA_BORNE = 20;        // Distância para bornes topo/base
+            const DIST_SEGURANCA = 30;     // Distância para bornes laterais (esquerda/direita)
+
             const pista = Math.max(0, Math.abs(parseInt(desvio, 10) || 0));
-            const afastamento = SAIDA_BORNE + (pista > 0 ? (pista * 10) : 0); // Reduzido para evitar curvas bruscas na saída
+            const afastamento = SAIDA_BORNE + (pista > 0 ? (pista * 10) : 0);
 
             function alinharCanal(v) {
                 return Math.round(v / PASSO_MALHA) * PASSO_MALHA;
             }
 
-            // Se já está perfeitamente alinhado, fica reto. Isso impede que uma
-            // ligação correta seja aberta sem necessidade.
             const fmt = (v) => Math.round(v * 10) / 10;
+
+            // CASO 1: Alinhados na mesma vertical ou horizontal → linha reta
             if (mesmaVertical) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)}`;
             if (mesmaHorizontal) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s1.y)}`;
 
-            const baseBase = lado1 === "base" && lado2 === "base";
-            const topoTopo = lado1 === "topo" && lado2 === "topo";
+            // CASO 2: Ambos bornes no TOPO → sai reto para cima, canal horizontal acima
+            if (lado1 === "topo" && lado2 === "topo") {
+                const yMenor = Math.min(s1.y, s2.y);
+                const yCanal = alinharCanal(yMenor - afastamento);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // CASO 3: Ambos bornes na BASE → sai reto para baixo, canal horizontal abaixo
+            if (lado1 === "base" && lado2 === "base") {
+                const yMaior = Math.max(s1.y, s2.y);
+                const yCanal = alinharCanal(yMaior + afastamento);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // CASO 4: Bornes opostos verticalmente (base-topo)
             const entreBaseTopo =
                 (lado1 === "base" && lado2 === "topo") ||
                 (lado1 === "topo" && lado2 === "base");
 
-            if (baseBase) {
-                const yCanal = alinharCanal(Math.max(s1.y, s2.y) + afastamento);
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-
-            if (topoTopo) {
-                const yCanal = alinharCanal(Math.min(s1.y, s2.y) - afastamento);
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-
-            // v116.7: Componentes 24V + Fonte Chaveada — bornes topo/base. Evita que o fio passe
-            // por dentro do corpo do componente. O fio deve sair para FORA do corpo antes de virar.
-            // Fonte chaveada: bornes superiores (L, N, PE) saem para cima, inferiores (+, -) saem para baixo.
+            // Componentes 24V: sensores/bobinas devem sair para FORA do corpo
             const comp24V = new Set([
                 "sensor-indutivo", "sensor-capacitivo",
                 "sensor-capacitivo-cilindrico", "bobinaInterface24V",
@@ -4616,29 +4618,19 @@ function abrirPainelConfiguracao(comp) {
                 const yMaior = Math.max(s1.y, s2.y);
                 let yCanal;
 
-                // Se AMBOS são componentes 24V com bornes topo/base, fazer o fio
-                // sair para FORA dos corpos antes de conectar.
                 if ((comp1_24V && comp2_24V) || (comp1_24V && lado1 === "base" && comp2_24V && lado2 === "topo")) {
-                    // Comp com borne "topo" fica em cima — fio sobe para fora do corpo
-                    // Comp com borne "base" fica embaixo — fio desce para fora do corpo
                     if (yMaior - yMenor >= SAIDA_BORNE * 4) {
-                        // Distância suficiente: canal fica entre os dois componentes
                         yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
                         const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
                         if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
                     } else {
-                        // Distância curta: canal fica acima do topo do componente superior
                         yCanal = alinharCanal(yMenor - afastamento);
                     }
                 } else if (comp1_24V && lado1 === "topo" && !comp2_24V) {
-                    // Sensores 24V com borne topo conectando a componente não-24V
-                    // Se o alvo está abaixo (lado2=base), o fio deve SUBIR do topo
-                    // em vez de descer por dentro do corpo do sensor
                     if (yMaior - yMenor >= SAIDA_BORNE * 4) {
                         yCanal = alinharCanal(yMenor - afastamento - (pista * PASSO_MALHA));
                         const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
                         if (yCanal > limiteInferior) {
-                            // Não há espaço para sair por cima — usa o canal normal
                             yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
                             if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
                         }
@@ -4646,8 +4638,6 @@ function abrirPainelConfiguracao(comp) {
                         yCanal = alinharCanal(yMenor - afastamento);
                     }
                 } else if (comp1_24V && lado1 === "base" && !comp2_24V) {
-                    // Sensores 24V com borne base conectando a componente não-24V
-                    // Se o alvo está acima (lado2=topo), o fio deve DESCER do base
                     if (yMaior - yMenor >= SAIDA_BORNE * 4) {
                         yCanal = alinharCanal(yMaior + afastamento + (pista * PASSO_MALHA));
                         const limiteSuperior = alinharCanal(yMenor + SAIDA_BORNE);
@@ -4659,7 +4649,6 @@ function abrirPainelConfiguracao(comp) {
                         yCanal = alinharCanal(yMaior + afastamento);
                     }
                 } else if (comp2_24V && lado2 === "topo" && !comp1_24V) {
-                    // Alvo 24V com borne topo — fio deve SUBIR até o alvo
                     if (yMaior - yMenor >= SAIDA_BORNE * 4) {
                         yCanal = alinharCanal(yMenor - afastamento - (pista * PASSO_MALHA));
                         const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
@@ -4671,7 +4660,6 @@ function abrirPainelConfiguracao(comp) {
                         yCanal = alinharCanal(yMenor - afastamento);
                     }
                 } else if (comp2_24V && lado2 === "base" && !comp1_24V) {
-                    // Alvo 24V com borne base — fio deve DESCER até o alvo
                     if (yMaior - yMenor >= SAIDA_BORNE * 4) {
                         yCanal = alinharCanal(yMaior + afastamento + (pista * PASSO_MALHA));
                         const limiteSuperior = alinharCanal(yMenor + SAIDA_BORNE);
@@ -4683,7 +4671,7 @@ function abrirPainelConfiguracao(comp) {
                         yCanal = alinharCanal(yMaior + afastamento);
                     }
                 } else {
-                    // Comportamento original (sem alteração) para componentes não-24V
+                    // Comportamento padrão para componentes não-24V
                     if (yMaior - yMenor >= SAIDA_BORNE * 3) {
                         yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
                         const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
@@ -4695,52 +4683,53 @@ function abrirPainelConfiguracao(comp) {
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
-            // Roteamento Simplificado em "L" ou "Z" para evitar sobreposições desnecessárias
-            if (lado1 === "topo" || lado1 === "base") {
-                // Ajuste v116.5: Garante saída reta antes de virar (estilo Escada/Z)
-                // Se for topo/base, a primeira e a última pernas DEVEM ser verticais para sair reto do niple.
-                
-                // Calculamos um ponto de recuo vertical (afastamento)
-                const yAfastamento1 = lado1 === "topo" ? (s1.y - SAIDA_BORNE - (pista * 5)) : (s1.y + SAIDA_BORNE + (pista * 5));
-                
-                // RESTAURAÇÃO: Forçar saída vertical para evitar cruzamento horizontal nos nipes
-                // Se o destino também for topo/base, calculamos o ponto médio. Caso contrário, usamos o afastamento de saída.
-                if (lado2 === "topo" || lado2 === "base") {
-                    const yAfastamento2 = lado2 === "topo" ? (s2.y - SAIDA_BORNE - (pista * 5)) : (s2.y + SAIDA_BORNE + (pista * 5));
-                    const yMedio = alinharCanal((yAfastamento1 + yAfastamento2) / 2);
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yMedio)} L ${fmt(s2.x)} ${fmt(yMedio)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
-                
-                // Se o destino for lateral, mantém a saída vertical e depois vira horizontal
-                // v116.5: Para componentes 24V com borne topo, o fio deve SUBIR primeiro
-                // (afastar do corpo) antes de ir até o borne lateral
-                if (comp1_24V && lado1 === "topo") {
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yAfastamento1)} L ${fmt(s2.x)} ${fmt(yAfastamento1)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
-                // v116.5: Para componentes 24V com borne base, o fio deve DESCER primeiro
-                if (comp1_24V && lado1 === "base") {
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yAfastamento1)} L ${fmt(s2.x)} ${fmt(yAfastamento1)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            } else if (lado1 === "esquerda" || lado1 === "direita") {
-                // v116.5: Formato em "L" ou "Z" horizontal EXTERNO para bornes laterais (Inversor/Soft-Starter)
-                // FORÇA a saída para FORA do componente (afastamento de segurança)
-                const distSeguranca = 30;
-                const xSaida = lado1 === "esquerda" ? (s1.x - distSeguranca) : (s1.x + distSeguranca);
-                
-                // Se o destino for lateral, faz um Z horizontal garantindo o afastamento
-                if (lado2 === "esquerda" || lado2 === "direita") {
-                    const xDestinoSaida = lado2 === "esquerda" ? (s2.x - distSeguranca) : (s2.x + distSeguranca);
-                    const xMedio = (xSaida + xDestinoSaida) / 2;
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xSaida)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s2.y)} L ${fmt(xDestinoSaida)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
-                
-                // Se o destino for topo/base, o fio sai horizontalmente até um ponto seguro e depois vira
-                // O ponto de curva deve ser PELO MENOS o xSaida para evitar atropelar bornes vizinhos
-                const xCurva = (lado1 === "direita") ? Math.max(xSaida, s2.x) : Math.min(xSaida, s2.x);
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            // CASO 5: Ambos bornes na ESQUERDA → sai reto p/ esquerda, canal vertical
+            if (lado1 === "esquerda" && lado2 === "esquerda") {
+                const xMenor = Math.min(s1.x, s2.x);
+                const xCanal = alinharCanal(xMenor - DIST_SEGURANCA - (pista * 10));
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xCanal)} ${fmt(s1.y)} L ${fmt(xCanal)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
+            // CASO 6: Ambos bornes na DIREITA → sai reto p/ direita, canal vertical
+            if (lado1 === "direita" && lado2 === "direita") {
+                const xMaior = Math.max(s1.x, s2.x);
+                const xCanal = alinharCanal(xMaior + DIST_SEGURANCA + (pista * 10));
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xCanal)} ${fmt(s1.y)} L ${fmt(xCanal)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // CASO 7: Bornes opostos lateralmente (esquerda-direita)
+            const entreEsquerdaDireita =
+                (lado1 === "esquerda" && lado2 === "direita") ||
+                (lado1 === "direita" && lado2 === "esquerda");
+
+            if (entreEsquerdaDireita) {
+                const xSaida1 = lado1 === "esquerda" ? (s1.x - DIST_SEGURANCA) : (s1.x + DIST_SEGURANCA);
+                const xSaida2 = lado2 === "esquerda" ? (s2.x - DIST_SEGURANCA) : (s2.x + DIST_SEGURANCA);
+                const xCanal = alinharCanal((xSaida1 + xSaida2) / 2);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xSaida1)} ${fmt(s1.y)} L ${fmt(xCanal)} ${fmt(s1.y)} L ${fmt(xCanal)} ${fmt(s2.y)} L ${fmt(xSaida2)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // CASO 8: MISTO — topo/base com esquerda/direita
+            const ehVertical1 = (lado1 === "topo" || lado1 === "base");
+            const ehVertical2 = (lado2 === "topo" || lado2 === "base");
+            const ehHorizontal1 = (lado1 === "esquerda" || lado1 === "direita");
+            const ehHorizontal2 = (lado2 === "esquerda" || lado2 === "direita");
+
+            if (ehVertical1 && ehHorizontal2) {
+                // borne1 topo/base sai vertical, borne2 lateral sai horizontal
+                const ySaida1 = lado1 === "topo" ? (s1.y - SAIDA_BORNE - (pista * 5)) : (s1.y + SAIDA_BORNE + (pista * 5));
+                const xSaida2 = lado2 === "esquerda" ? (s2.x - DIST_SEGURANCA) : (s2.x + DIST_SEGURANCA);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(ySaida1)} L ${fmt(xSaida2)} ${fmt(ySaida1)} L ${fmt(xSaida2)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            if (ehHorizontal1 && ehVertical2) {
+                // borne1 lateral sai horizontal, borne2 topo/base sai vertical
+                const xSaida1 = lado1 === "esquerda" ? (s1.x - DIST_SEGURANCA) : (s1.x + DIST_SEGURANCA);
+                const ySaida2 = lado2 === "topo" ? (s2.y - SAIDA_BORNE - (pista * 5)) : (s2.y + SAIDA_BORNE + (pista * 5));
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xSaida1)} ${fmt(s1.y)} L ${fmt(xSaida1)} ${fmt(ySaida2)} L ${fmt(s2.x)} ${fmt(ySaida2)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // CASO 9: Fallback para "meio" ou situações não cobertas
             if (Math.abs(dx) >= Math.abs(dy)) {
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
