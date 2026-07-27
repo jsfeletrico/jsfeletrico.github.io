@@ -4635,9 +4635,11 @@ function abrirPainelConfiguracao(comp) {
             // ═══════════════════════════════════════════════════════════════════
             // REGRA 2: ALIMENTAÇÃO como origem
             // Rede RST, L1, L2, L3, N, PE, +, -
-            // Borne SEMPRE classificado como "base".
-            // O fio desce RETO do borne, vira horizontal, desce no destino.
-            // Formato: ↓ (desce reto) → (vira) ↓ (desce reto no destino)
+            // PARALELISMO PERFEITO: cada fio desce RETO do borne de origem,
+            // vira no canal horizontal, e desce RETO no borne de destino.
+            // A distância entre os fios R-S-T é preservada do início ao fim.
+            // Os fios NUNCA convergem — cada um segue sua própria coluna X.
+            // Formato: ↓ (desce reto) → (vira horizontal) ↓ (desce reto no destino)
             // ═══════════════════════════════════════════════════════════════════
             const tiposAlimentacao = [
                 "rede-trifasica-n-pe", "alimentacao-fase", "alimentacao-fase-l2",
@@ -4660,6 +4662,10 @@ function abrirPainelConfiguracao(comp) {
                 }
                 
                 // Formato: desce reto → vira horizontal → desce reto
+                // Cada fio mantém sua coluna X na descida (sem convergir)
+                // R: desce em x=20, vira, desce em x=120
+                // S: desce em x=50, vira, desce em x=150
+                // T: desce em x=80, vira, desce em x=180
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
