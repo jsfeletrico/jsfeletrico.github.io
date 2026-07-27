@@ -4683,7 +4683,7 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha adaptativa
+            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha SEMPRE
             // Aplica a mesma escadinha da Rede RST para TODOS os componentes
             // trifásicos de força: disjuntor, contator, relé térmico,
             // soft-starter, inversor, motor, fusível tripolar.
@@ -4691,81 +4691,56 @@ function abrirPainelConfiguracao(comp) {
             // Lógica:
             //   → Destino à DIREITA: borne mais à direita quebra primeiro
             //   → Destino à ESQUERDA: borne mais à esquerda quebra primeiro
-            // ESPAÇAMENTO IDEAL = 30 px (= distância entre bornes)
-            // Se o espaço vertical for insuficiente, degraus são reduzidos.
+            // ESPAÇAMENTO = 30 px (= distância entre bornes)
+            // Se o espaço vertical for curto, usar 1/3 do espaço como degrau.
             // Cada fio mantém a mesma distância entre eles.
+            // NUNCA usar linha reta — sempre escadinha.
             // VERIFICADA ANTES DA REGRA 2 para funcionar mesmo alinhados.
             // ───────────────────────────────────────────────────────────────────
             if (tiposForcaTrifasica.includes(tipo1) && lado1 !== "esquerda" && lado1 !== "direita") {
                 const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
-                const espacamentoIdeal = 30; // distância entre bornes
-
-                const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
-                const subir = (lado1 === "topo");
-                const destinoADireita = s2.x >= s1.x;
-
-                // Limite do destino: o yCanal nunca pode passar do borne de destino
-                const limiteDestinoY = s2.y;
-
-                // Calcular o espaço vertical disponível entre origem e destino
-                const espacoVertical = subir
-                    ? (baseY - limiteDestinoY)
-                    : (limiteDestinoY - baseY);
-
                 const posicaoRelativa = Math.round((terminalX - 20) / 30);
 
-                // Mínimo de espaço para escadinha: 60px (2 degraus de 30px)
-                // Se espaço < 60px, não cabe escadinha — usar linha reta
-                if (espacoVertical < 60) {
-                    // Sem espaço para escadinha: linha reta do origem ao destino
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
+                // baseY = ponto de saída do borne (como na Regra 3)
+                // Para base: s1.y + SAIDA_BORNE (abaixo do borne)
+                // Para topo: s1.y - SAIDA_BORNE (acima do borne)
+                const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
 
-                // Calcular a direção do offset: qual borne quebra primeiro
+                // Limite do destino: o fio não pode ultrapassar o borne de destino
+                // Para destino topo: o fio deve chegar no s2.y (não precisa de margem)
+                // Para destino base: o fio deve chegar no s2.y (não precisa de margem)
+                const limiteDestinoY = s2.y;
+
+                // Espaço vertical disponível entre baseY e o destino
+                const espacoVertical = (lado1 === "topo")
+                    ? (baseY - limiteDestinoY)  // subindo: baseY > limiteDestinoY
+                    : (limiteDestinoY - baseY);  // descendo: limiteDestinoY > baseY
+
+                // Degrau: ideal 30px, mas se espaço for curto usar 1/3 do espaço
+                const espacamento = espacoVertical >= 90 ? 30 : Math.max(5, Math.floor(Math.max(espacoVertical, 15) / 3));
+
+                const destinoADireita = s2.x >= s1.x;
+
+                // Calcular a direção do offset
                 let direcaoOffset;
                 if (destinoADireita) {
-                    direcaoOffset = (2 - posicaoRelativa) * espacamentoIdeal; // T primeiro
+                    direcaoOffset = (2 - posicaoRelativa) * espacamento;
                 } else {
-                    direcaoOffset = posicaoRelativa * espacamentoIdeal; // R primeiro
+                    direcaoOffset = posicaoRelativa * espacamento;
                 }
 
-                // Calcular yCanal bruto
+                // Calcular yCanal
                 let yCanal;
-                if (subir) {
+                if (lado1 === "topo") {
+                    // Subindo: yCanal diminui
                     yCanal = baseY - direcaoOffset;
-                } else {
-                    yCanal = baseY + direcaoOffset;
-                }
-
-                // Aplicar limites: nunca ultrapassar o destino
-                if (subir) {
                     if (yCanal < limiteDestinoY) yCanal = limiteDestinoY;
                     if (yCanal > baseY) yCanal = baseY;
                 } else {
+                    // Descendo: yCanal aumenta
+                    yCanal = baseY + direcaoOffset;
                     if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
                     if (yCanal < baseY) yCanal = baseY;
-                }
-
-                // Se o yCanal foi truncado, reduzir a escadinha para caber
-                const maxOffset = subir
-                    ? (baseY - limiteDestinoY)
-                    : (limiteDestinoY - baseY);
-
-                if (Math.abs(direcaoOffset) > maxOffset) {
-                    const espacamentoReal = Math.max(10, Math.floor(maxOffset / 2));
-                    let direcaoOffsetReduzida;
-                    if (destinoADireita) {
-                        direcaoOffsetReduzida = (2 - posicaoRelativa) * espacamentoReal;
-                    } else {
-                        direcaoOffsetReduzida = posicaoRelativa * espacamentoReal;
-                    }
-                    if (subir) {
-                        yCanal = baseY - direcaoOffsetReduzida;
-                        if (yCanal < limiteDestinoY) yCanal = limiteDestinoY;
-                    } else {
-                        yCanal = baseY + direcaoOffsetReduzida;
-                        if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
-                    }
                 }
 
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
