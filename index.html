@@ -4648,49 +4648,30 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 3: ALIMENTAÇÃO TRIFÁSICA (RST) — Escadinha paralela 30px
-            // Fio desce RETO do borne (vertical), vira em Y diferente por fase,
+            // REGRA TRIFÁSICA: ESCADINHA 30px FIXO
+            // Aplica-se a TODOS os componentes trifásicos de força:
+            // Rede RST, Disjuntor, Contator, Relé, Fusível, Soft-Starter,
+            // Inversor, Motor trifásico, Motor 6 bornes, Motor Dahlander.
+            // Fio desce RETO do borne, vira em Y diferente por fase,
             // andam PARALELOS com 30px de distância entre cada um.
-            //   → Destino à DIREITA: T quebra primeiro, depois S, depois R
-            //   → Destino à ESQUERDA: R quebra primeiro, depois S, depois T
+            //   → Destino à DIREITA: borne 3 (T/W) quebra primeiro, depois 2 (S/V), depois 1 (R/U)
+            //   → Destino à ESQUERDA: borne 1 (R/U) quebra primeiro, depois 2 (S/V), depois 3 (T/W)
             // ESPAÇAMENTO FIXO = 30 px (= distância entre bornes)
             // NÃO adiciona pista — a posição do borne já define o canal.
             // Limite: yCanal nunca ultrapassa o Y do destino (evita voltar pra cima).
+            // Aplica-se quando ORIGEM ou DESTINO é trifásico (base/topo, nunca lateral).
             // ───────────────────────────────────────────────────────────────────
-            if (tipo1 === "rede-trifasica-n-pe") {
+            const ehTrifasicoOrigem = tiposForcaTrifasica.includes(tipo1) || tipo1 === "rede-trifasica-n-pe";
+            const ehTrifasicoDestino = tiposForcaTrifasica.includes(tipo2) || tipo2 === "rede-trifasica-n-pe";
+
+            if ((ehTrifasicoOrigem || ehTrifasicoDestino) &&
+                lado1 !== "esquerda" && lado1 !== "direita" &&
+                lado2 !== "esquerda" && lado2 !== "direita") {
+
                 const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
-                const passoRef = 30; // R=20, S=50, T=80
+                const passoRef = 30; // bornes em x=20, x=50, x=80
                 const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
-                // posicaoRelativa: 0=R, 1=S, 2=T
-
-                const espacamento = 30; // FIXO = distância entre bornes
-                const baseY = s1.y + SAIDA_BORNE;
-                const limiteMaximo = s2.y - SAIDA_BORNE; // nunca passar do destino
-
-                const destinoADireita = s2.x >= s1.x;
-                let yCanal;
-
-                if (destinoADireita) {
-                    yCanal = baseY + ((2 - posicaoRelativa) * espacamento);
-                } else {
-                    yCanal = baseY + (posicaoRelativa * espacamento);
-                }
-
-                if (yCanal < baseY) yCanal = baseY;
-                if (yCanal > limiteMaximo) yCanal = limiteMaximo;
-
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-
-            // ───────────────────────────────────────────────────────────────────
-            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA
-            // MESMA LÓGICA DA REGRA 3 — sem adaptação, sem espacamento variável.
-            // ───────────────────────────────────────────────────────────────────
-            if (tiposForcaTrifasica.includes(tipo1) && lado1 !== "esquerda" && lado1 !== "direita") {
-                const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
-                const passoRef = 30; // R=20, S=50, T=80
-                const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
-                // posicaoRelativa: 0=R, 1=S, 2=T
+                // posicaoRelativa: 0=esquerda, 1=meio, 2=direita
 
                 const espacamento = 30; // FIXO = distância entre bornes
 
@@ -4699,44 +4680,17 @@ function abrirPainelConfiguracao(comp) {
                 // Para topo (sobe): s1.y - SAIDA_BORNE
                 const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
 
-                // Limite: nunca ultrapassar o destino
+                // Limite: nunca ultrapassar o Y do destino
                 const limiteDestinoY = s2.y;
 
                 const destinoADireita = s2.x >= s1.x;
                 let yCanal;
 
                 if (destinoADireita) {
+                    // Destino à direita: borne da direita quebra primeiro
                     yCanal = baseY + ((2 - posicaoRelativa) * espacamento);
                 } else {
-                    yCanal = baseY + (posicaoRelativa * espacamento);
-                }
-
-                if (yCanal < baseY) yCanal = baseY;
-                if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
-
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-
-            // ───────────────────────────────────────────────────────────────────
-            // REGRA 3b: DESTINO é SS/INV mas origem NÃO é trifásica
-            // MESMA LÓGICA DA REGRA 3 — sem adaptação.
-            // ───────────────────────────────────────────────────────────────────
-            if ((tipo2 === "inversor-frequencia" || tipo2 === "soft-starter") && lado1 !== "esquerda" && lado1 !== "direita") {
-                const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
-                const passoRef = 30;
-                const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
-
-                const espacamento = 30; // FIXO
-
-                const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
-                const limiteDestinoY = s2.y;
-
-                const destinoADireita = s2.x >= s1.x;
-                let yCanal;
-
-                if (destinoADireita) {
-                    yCanal = baseY + ((2 - posicaoRelativa) * espacamento);
-                } else {
+                    // Destino à esquerda: borne da esquerda quebra primeiro
                     yCanal = baseY + (posicaoRelativa * espacamento);
                 }
 
@@ -4810,12 +4764,6 @@ function abrirPainelConfiguracao(comp) {
                 let yCanal = alinharCanal(s1.y + SAIDA_BORNE);
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
-
-            // ───────────────────────────────────────────────────────────────────
-            // REGRA 5: REMOVIDA — A Regra 3a já trata destino SS/INV via origem trifásica.
-            // A Regra 5 antiga usava pista*PASSO_MALHA que causava bagunça nos fios trifásicos.
-            // Agora a Regra 3a cuida de TODAS as conexões trifásicas (base→topo, topo→base).
-            // ───────────────────────────────────────────────────────────────────
 
             // ───────────────────────────────────────────────────────────────────
             // REGRA 6: CASO PADRÃO (base-topo, base-base, topo-topo)
