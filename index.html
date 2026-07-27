@@ -4775,8 +4775,149 @@ function abrirPainelConfiguracao(comp) {
         }
 
         // ===== FUNÇÃO PRINCIPAL: Roteador que decide qual função chamar =====
+// v117.6: Roteamento limpo — máximo 2 curvas (formato L)
+        // PRINCÍPIO: O fio sai PERPENDICULAR ao borne (20px para topo/base, 30px para lateral).
+        // Depois faz UMA curva reto até o destino.
+        // Alinhados = reta. Desalinhados = 2 curvas (L). Nunca zigzag.
+        // Canal de pista para fios paralelos: offset no canal.
+
+        const ROTA_MALHA = 20;
+        const ROTA_SAIDA = 20;
+        const ROTA_DIST_LAT = 30;
+
+        const ROTA_24V = new Set(["sensor-indutivo","sensor-capacitivo","sensor-capacitivo-cilindrico","bobinaInterface24V","fonte-chaveada"]);
+        const ROTA_LAT_DIR = new Set(["inversor-frequencia","soft-starter"]);
+        const ROTA_LAT_ESQ = new Set(["valvula-5-2"]);
+
+        function rFmt(v) { return Math.round(v * 10) / 10; }
+        function rMalha(v) { return Math.round(v / ROTA_MALHA) * ROTA_MALHA; }
+
+        // ===== FUNÇÃO 1: Vertical padrão (contator, disjuntor, rede, botões, bobinas) =====
+        function rotaVerticalPadrao(s1, s2, dy, lado1, lado2, pista) {
+            // Alinhados na mesma coluna → reta
+            if (Math.abs(s1.x - s2.x) < 2) {
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)}`;
+            }
+
+            // Direção de saída: para fora do corpo do componente
+            // "topo" = borne no topo → sai para fora (direção do outro componente)
+            // "base" = borne na base → sai para fora (direção do outro componente)
+            const ySaida1 = lado1 === "topo"
+                ? (dy >= 0 ? s1.y + ROTA_SAIDA : s1.y - ROTA_SAIDA)
+                : (dy <= 0 ? s1.y - ROTA_SAIDA : s1.y + ROTA_SAIDA);
+            const ySaida2 = lado2 === "topo"
+                ? ((-dy) >= 0 ? s2.y + ROTA_SAIDA : s2.y - ROTA_SAIDA)
+                : ((-dy) <= 0 ? s2.y - ROTA_SAIDA : s2.y + ROTA_SAIDA);
+
+            const ambosDescem = (ySaida1 > s1.y) && (ySaida2 > s2.y);
+            const ambosSobem = (ySaida1 < s1.y) && (ySaida2 < s2.y);
+
+            if (ambosDescem || ambosSobem) {
+                // Canal horizontal no extremo
+                const yCanal = ambosDescem
+                    ? Math.max(s1.y, s2.y) + ROTA_SAIDA
+                    : Math.min(s1.y, s2.y) - ROTA_SAIDA;
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+            }
+
+            // Direções opostas (base-topo) → canal entre componentes
+            const offset = pista * ROTA_MALHA;
+            const yMenor = Math.min(s1.y, s2.y);
+            const yMaior = Math.max(s1.y, s2.y);
+            const yCanal = rMalha(yMenor + ROTA_SAIDA + offset);
+            const yLimite = rMalha(yMaior - ROTA_SAIDA);
+            const yCanalFinal = yCanal > yLimite ? yLimite : yCanal;
+
+            return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanalFinal)} L ${rFmt(s2.x)} ${rFmt(yCanalFinal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+        }
+
+        // ===== FUNÇÃO 2: Vertical 24V =====
+        function rotaVertical24V(s1, s2, dy, lado1, lado2, pista, tipo1, tipo2) {
+            const comp1_24V = ROTA_24V.has(tipo1);
+            const comp2_24V = ROTA_24V.has(tipo2);
+            const offset = ROTA_SAIDA + pista * ROTA_MALHA;
+
+            if (comp1_24V && !comp2_24V) {
+                const yCanal = lado1 === "topo" ? s1.y - offset : s1.y + offset;
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+            }
+            if (comp2_24V && !comp1_24V) {
+                const yCanal = lado2 === "topo" ? s2.y - offset : s2.y + offset;
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+            }
+            if (comp1_24V && comp2_24V) {
+                const yMenor = Math.min(s1.y, s2.y);
+                const yMaior = Math.max(s1.y, s2.y);
+                if (yMaior - yMenor >= ROTA_SAIDA * 4) {
+                    const yCanal = rMalha(yMenor + ROTA_SAIDA + offset);
+                    const yLimite = rMalha(yMaior - ROTA_SAIDA);
+                    const yF = yCanal > yLimite ? yLimite + (yCanal - yLimite) : yCanal;
+                    return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yF)} L ${rFmt(s2.x)} ${rFmt(yF)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+                }
+            }
+            return rotaVerticalPadrao(s1, s2, dy, lado1, lado2, pista);
+        }
+
+        // ===== FUNÇÃO 3: Lateral (Inversor, Soft-Starter, Válvula 5/2) =====
+        // Regra: sai horizontal 30px na direção do outro borne, depois vertical reto.
+        // Formato: → ↑ (2 curvas) ou — (reta quando mesma altura)
+        function rotaLateral(s1, s2, dx, dy, lado1, lado2, pista) {
+            // Mesma altura → reta horizontal
+            if (Math.abs(dy) < 2) {
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s1.y)}`;
+            }
+
+            // Direção de saída: cada borne lateral tem sua direção fixa
+            // "esquerda" = sai para esquerda, "direita" = sai para direita
+            const xSaida1 = lado1 === "esquerda" ? (s1.x - ROTA_DIST_LAT) : (s1.x + ROTA_DIST_LAT);
+            const xSaida2 = lado2 === "esquerda" ? (s2.x - ROTA_DIST_LAT) : (s2.x + ROTA_DIST_LAT);
+
+            // Se ambos saem para o MESMO lado (ambos direita ou ambos esquerda)
+            const ambosDir = (xSaida1 > s1.x) && (xSaida2 > s2.x);
+            const ambosEsq = (xSaida1 < s1.x) && (xSaida2 < s2.x);
+
+            if (ambosDir || ambosEsq) {
+                // Canal vertical compartilhado no extremo
+                const xCanal = ambosDir ? Math.max(xSaida1, xSaida2) : Math.min(xSaida1, xSaida2);
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+            }
+
+            // Direções opostas (um esquerda, outro direita) → canal vertical no meio
+            // Formato: — → ↑ (3 curvas) ou — → ↓ (3 curvas)
+            // Mas se dx é grande o suficiente, podemos fazer 2 curvas:
+            // Sai horizontal → canal vertical → entra horizontal
+            const xCanal = rMalha((xSaida1 + xSaida2) / 2);
+            return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(xSaida1)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s2.y)} L ${rFmt(xSaida2)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+        }
+
+        // ===== FUNÇÃO 4: Mista (borne vertical + borne lateral) =====
+        // Regra: lateral sai horizontal (30px), vertical sai perpendicular (20px)
+        // Formato: → ↑ (2 curvas: formato L limpo)
+        function rotaMista(s1, s2, dx, dy, lado1, lado2, pista) {
+            const offsetPista = pista * ROTA_MALHA;
+
+            if ((lado1 === "topo" || lado1 === "base") && (lado2 === "esquerda" || lado2 === "direita")) {
+                // borne1 vertical, borne2 lateral
+                const ySaida1 = lado1 === "topo"
+                    ? (dy < 0 ? s1.y - ROTA_SAIDA : s1.y + ROTA_SAIDA)
+                    : (dy > 0 ? s1.y + ROTA_SAIDA : s1.y - ROTA_SAIDA);
+                const xSaida2 = lado2 === "esquerda" ? s2.x - ROTA_DIST_LAT : s2.x + ROTA_DIST_LAT;
+                // Ajusta o canal vertical com pista
+                const yCanal = ySaida1 + (dy > 0 ? -offsetPista : offsetPista);
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(xSaida2)} ${rFmt(yCanal)} L ${rFmt(xSaida2)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+            }
+
+            // ehHorizontal1 && ehVertical2
+            const xSaida1 = lado1 === "esquerda" ? s1.x - ROTA_DIST_LAT : s1.x + ROTA_DIST_LAT;
+            const ySaida2 = lado2 === "topo"
+                ? ((-dy) < 0 ? s2.y - ROTA_SAIDA : s2.y + ROTA_SAIDA)
+                : ((-dy) > 0 ? s2.y + ROTA_SAIDA : s2.y - ROTA_SAIDA);
+            const yCanal = ySaida2 + ((-dy) > 0 ? -offsetPista : offsetPista);
+            return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(xSaida1)} ${rFmt(s1.y)} L ${rFmt(xSaida1)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
+        }
+
+        // ===== FUNÇÃO PRINCIPAL: Roteador =====
         function gerarCaminhoOrtogonal(p1, p2, desvio = 0, info1 = null, info2 = null) {
-            // v117.5: Roteador principal — delega para funções isoladas por categoria
             const s1 = { x: p1.x, y: p1.y };
             const s2 = { x: p2.x, y: p2.y };
             const dx = s2.x - s1.x;
@@ -4795,45 +4936,35 @@ function abrirPainelConfiguracao(comp) {
             const tipo1 = info1 && info1.comp ? info1.comp.tipo : "";
             const tipo2 = info2 && info2.comp ? info2.comp.tipo : "";
 
-            // CASO 1: Alinhados na mesma vertical ou horizontal → linha reta
-            if (mesmaVertical) return `M ${rotaFmt(s1.x)} ${rotaFmt(s1.y)} L ${rotaFmt(s1.x)} ${rotaFmt(s2.y)}`;
-            if (mesmaHorizontal) return `M ${rotaFmt(s1.x)} ${rotaFmt(s1.y)} L ${rotaFmt(s2.x)} ${rotaFmt(s1.y)}`;
+            // CASO 1: Alinhados → linha reta (0 curvas)
+            if (mesmaVertical) return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)}`;
+            if (mesmaHorizontal) return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s1.y)}`;
 
-            // CASO 2: Ambos bornes laterais
+            // CASO 2: Ambos laterais
             if (ehHorizontal1 && ehHorizontal2) {
-                // Se pelo menos um é Inversor/Soft-Starter → usa regra lateral inversor
-                if (ROTA_LATERAL_DIR.has(tipo1) || ROTA_LATERAL_DIR.has(tipo2)) {
-                    return rotaLateralInversor(s1, s2, dx, lado1, lado2, pista);
-                }
-                // Se pelo menos um é Válvula 5/2 → usa regra lateral válvula
-                if (ROTA_LATERAL_ESQ.has(tipo1) || ROTA_LATERAL_ESQ.has(tipo2)) {
-                    return rotaLateralValvula(s1, s2, dx, lado1, lado2, pista);
-                }
-                // Caso genérico lateral+lateral (sem componente específico)
-                return rotaLateralInversor(s1, s2, dx, lado1, lado2, pista);
+                return rotaLateral(s1, s2, dx, dy, lado1, lado2, pista);
             }
 
-            // CASO 3: Ambos bornes verticais (topo/base)
+            // CASO 3: Ambos verticais
             if (ehVertical1 && ehVertical2) {
-                // Se pelo menos um é componente 24V → usa regra 24V
-                if (ROTA_COMP24V.has(tipo1) || ROTA_COMP24V.has(tipo2)) {
-                    return rotaVertical24V(s1, s2, dy, lado1, lado2, pista, tipo1, tipo2, info1, info2);
+                if (ROTA_24V.has(tipo1) || ROTA_24V.has(tipo2)) {
+                    return rotaVertical24V(s1, s2, dy, lado1, lado2, pista, tipo1, tipo2);
                 }
-                // Padrão: usa regra vertical (contator, disjuntor, rede, botões, etc.)
                 return rotaVerticalPadrao(s1, s2, dy, lado1, lado2, pista);
             }
 
-            // CASO 4: MISTO — um lateral + um vertical
+            // CASO 4: Misto
             if ((ehVertical1 && ehHorizontal2) || (ehHorizontal1 && ehVertical2)) {
                 return rotaMista(s1, s2, dx, dy, lado1, lado2, pista);
             }
 
-            // CASO 5: Fallback para "meio" ou situações não cobertas
+            // CASO 5: Fallback
             if (Math.abs(dx) >= Math.abs(dy)) {
-                return `M ${rotaFmt(s1.x)} ${rotaFmt(s1.y)} L ${rotaFmt(s1.x)} ${rotaFmt(s2.y)} L ${rotaFmt(s2.x)} ${rotaFmt(s2.y)}`;
+                return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
             }
-            return `M ${rotaFmt(s1.x)} ${rotaFmt(s1.y)} L ${rotaFmt(s2.x)} ${rotaFmt(s1.y)} L ${rotaFmt(s2.x)} ${rotaFmt(s2.y)}`;
+            return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
         }
+
 
 
 
