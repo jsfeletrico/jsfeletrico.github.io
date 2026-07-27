@@ -4648,12 +4648,6 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 2: Alinhamento perfeito → linha reta
-            // ───────────────────────────────────────────────────────────────────
-            if (mesmaVertical) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)}`;
-            if (mesmaHorizontal) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s1.y)}`;
-
-            // ───────────────────────────────────────────────────────────────────
             // REGRA 3: ALIMENTAÇÃO TRIFÁSICA (RST) — Escadinha inteligente
             // Fio desce RETO do borne (vertical), vira em Y diferente por fase,
             // desce RETO no destino.
@@ -4705,6 +4699,7 @@ function abrirPainelConfiguracao(comp) {
             // Espaçamento entre degraus = 30 px (= distância entre bornes)
             // Usa info1.terminal.x (posição RELATIVA dentro do componente).
             // NÃO afeta bornes laterais (DI, A1, A2, PE, IN, GND, etc.)
+            // VERIFICADA ANTES DA REGRA 2 para funcionar mesmo alinhados.
             // ───────────────────────────────────────────────────────────────────
             if (tiposForcaTrifasica.includes(tipo1) && lado1 !== "esquerda" && lado1 !== "direita") {
                 const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
@@ -4745,6 +4740,13 @@ function abrirPainelConfiguracao(comp) {
 
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
+
+            // ───────────────────────────────────────────────────────────────────
+            // REGRA 2: Alinhamento perfeito → linha reta
+            // (DEPOIS das regras trifásicas, para não sobrepor a escadinha)
+            // ───────────────────────────────────────────────────────────────────
+            if (mesmaVertical) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)}`;
+            if (mesmaHorizontal) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s1.y)}`;
 
             // ───────────────────────────────────────────────────────────────────
             // REGRA 3b: ALIMENTAÇÃO MONOFÁSICA (L1, L2, L3, N, PE, +, -)
