@@ -4662,8 +4662,9 @@ function abrirPainelConfiguracao(comp) {
                 // Posição relativa: 0=R(x=20), 1=S(x=50), 2=T(x=80)
                 const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
                 
-                // Espaçamento entre degraus: 10px (pequeno para caber em qualquer espaço)
-                const espacamento = 10;
+                // Espaçamento entre degraus = distância entre bornes (30px)
+                // Assim os fios ficam perfeitamente paralelos do início ao fim
+                const espacamento = 30;
                 
                 // T (posicaoRelativa=2): desce menos antes de virar
                 // S (posicaoRelativa=1): desce um pouco mais
@@ -4672,14 +4673,8 @@ function abrirPainelConfiguracao(comp) {
                 const maxPosicao = 2;
                 let yCanal = yPrimeiroDegrau + ((maxPosicao - posicaoRelativa) * espacamento);
                 
-                // Limitar: não pode ficar abaixo do borne de destino
-                if (s2.y > s1.y) {
-                    const limiteDestino = s2.y - SAIDA_BORNE;
-                    if (yCanal > limiteDestino) yCanal = limiteDestino;
-                }
-                
-                // Garantir que o canal está abaixo do borne de origem
-                if (yCanal < s1.y + 5) yCanal = s1.y + 5;
+                // Garantir que o canal está abaixo do borne de origem (mínimo 20px)
+                if (yCanal < s1.y + SAIDA_BORNE) yCanal = s1.y + SAIDA_BORNE;
                 
                 // Formato: desce reto → vira horizontal (degrau) → desce reto
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
