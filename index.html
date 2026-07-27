@@ -4553,208 +4553,328 @@ function abrirPainelConfiguracao(comp) {
             if (!lista.some(v => Math.abs(v - arredondado) < 3)) lista.push(arredondado);
         }
 
-// ===== v117.7: ROTEAMENTO DE FIOS — Lógica limpa =====
-// v117.9: Roteamento — baseado na v116.1 (lógica que funcionava)
-// Regras fundamentais:
-// 1. Formato máximo: 4 pontos (M L L L = 2 curvas) ou 3 pontos (M L L = reta)
-// 2. Borne topo: fio sai para BAIXO (dy >= 0) ou para CIMA (dy < 0)
-// 3. Borne base: fio sai para BAIXO (dy >= 0) ou para CIMA (dy < 0)
-// 4. Borne lateral-esquerda: sai para ESQUERDA (30px)
-// 5. Borne lateral-direita: sai para DIREITA (30px)
-// 6. Canal horizontal: yCanal = borne + 20px na direção de saída
-// 7. Pistas: cada pista adiciona 20px de offset
+        function gerarCaminhoOrtogonal(p1, p2, desvio = 0, info1 = null, info2 = null) {
+            // ═══════════════════════════════════════════════════════════════════
+            // v117.0 — ROTEAMENTO INTELIGENTE DE FIAÇÃO
+            // ═══════════════════════════════════════════════════════════════════
+            // Regras implementadas:
+            // 1. Fio sai RETO do borne de origem, faz cotovelo suave e desce ao destino
+            // 2. NUNCA um fio cruza por cima do borne de outro fio (R não passa sobre S, etc.)
+            // 3. Fios paralelos NÃO seguem o mesmo caminho (offset lateral entre fios)
+            // ═══════════════════════════════════════════════════════════════════
+            const s1 = { x: p1.x, y: p1.y };
+            const s2 = { x: p2.x, y: p2.y };
+            const dx = s2.x - s1.x;
+            const dy = s2.y - s1.y;
+            const mesmaVertical = Math.abs(dx) < 2;
+            const mesmaHorizontal = Math.abs(dy) < 2;
+            const lado1 = info1 ? info1.lado : "meio";
+            const lado2 = info2 ? info2.lado : "meio";
 
-const ROTA_MALHA = 20;
-const ROTA_SAIDA = 20;
-const ROTA_DIST_LAT = 30;
+            const PASSO_MALHA = 20;
+            const SAIDA_BORNE = 20;
+            const pista = Math.max(0, Math.abs(parseInt(desvio, 10) || 0));
+            const afastamento = SAIDA_BORNE + (pista > 0 ? (pista * 10) : 0);
 
-const ROTA_24V = new Set([
-    "sensor-indutivo", "sensor-capacitivo",
-    "sensor-capacitivo-cilindrico", "bobinaInterface24V",
-    "fonte-chaveada"
-]);
+            function alinharCanal(v) {
+                return Math.round(v / PASSO_MALHA) * PASSO_MALHA;
+            }
 
-function rFmt(v) { return Math.round(v * 10) / 10; }
-function rMalha(v) { return Math.round(v / ROTA_MALHA) * ROTA_MALHA; }
+            const fmt = (v) => Math.round(v * 10) / 10;
 
-// Calcula o ponto de saída do borne (sai perpendicular, 20px ou 30px)
-function sairDoBorne(s, lado, destino) {
-    const dy = destino.y - s.y;
-    if (lado === "topo") {
-        return { x: s.x, y: dy >= 0 ? s.y + ROTA_SAIDA : s.y - ROTA_SAIDA };
-    } else if (lado === "base") {
-        return { x: s.x, y: dy >= 0 ? s.y + ROTA_SAIDA : s.y - ROTA_SAIDA };
-    } else if (lado === "esquerda") {
-        return { x: s.x - ROTA_DIST_LAT, y: s.y };
-    } else if (lado === "direita") {
-        return { x: s.x + ROTA_DIST_LAT, y: s.y };
-    }
-    return { x: s.x, y: s.y };
-}
+            // Se já está perfeitamente alinhado, fica reto
+            if (mesmaVertical) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)}`;
+            if (mesmaHorizontal) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s1.y)}`;
 
-// ===== ROTA VERTICAL (topo + topo, base + base, base + topo) =====
-function rotaVertical(s1, s2, lado1, lado2, pista) {
-    const dx = Math.abs(s2.x - s1.x);
-    const dy = s2.y - s1.y;
-    
-    // Alinhados → reta
-    if (dx < 2) {
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)}`;
-    }
-    
-    const out1 = sairDoBorne(s1, lado1, s2);
-    const out2 = sairDoBorne(s2, lado2, s1);
-    
-    const desce1 = out1.y > s1.y;
-    const desce2 = out2.y > s2.y;
-    
-    if (desce1 === desce2) {
-        // Ambos descem ou ambos sobem → canal no extremo (fora dos componentes)
-        const offset = pista * ROTA_MALHA;
-        let yCanal;
-        if (desce1) {
-            // Ambos descem: canal fica abaixo do borne mais alto (mais perto do outro)
-            // Para topo+topo com destino abaixo: yCanal = y1 + 20 (sai 20px do borne 1)
-            yCanal = rMalha(out1.y + offset);
-        } else {
-            // Ambos sobem: canal fica acima do borne mais baixo
-            yCanal = rMalha(out1.y - offset);
+            const baseBase = lado1 === "base" && lado2 === "base";
+            const topoTopo = lado1 === "topo" && lado2 === "topo";
+            const entreBaseTopo =
+                (lado1 === "base" && lado2 === "topo") ||
+                (lado1 === "topo" && lado2 === "base");
+
+            // ─── REGRA 1: Evitar que o segmento horizontal cruze sobre bornes de outro fio ───
+            // Calcula a "zona de proteção" de cada borne de cada conexão
+            // para que o segmento horizontal não passe por cima de bornes de fios paralelos
+            function bornesNaMesmaColuna(conexoesAtuais) {
+                const zonasBorne = [];
+                conexoesAtuais.forEach((c) => {
+                    const pi1 = obterCoordenadasAbsolutasTerminal(c.id1, c.t1);
+                    const pi2 = obterCoordenadasAbsolutasTerminal(c.id2, c.t2);
+                    if (pi1) zonasBorne.push({ x: pi1.x, y: pi1.y, margemX: 8 });
+                    if (pi2) zonasBorne.push({ x: pi2.x, y: pi2.y, margemX: 8 });
+                });
+                return zonasBorne;
+            }
+
+            function encontrarYHorizontalSemCruzarBornes(s1, s2, info1, info2, pistaAtual, bornesExistentes) {
+                // Determina a direção de saída do fio
+                const isTopo = info1 && (info1.lado === "topo" || info1.lado === "base");
+                const isTopo2 = info2 && (info2.lado === "topo" || info2.lado === "base");
+                const yOrigem1 = s1.y;
+                const yOrigem2 = s2.y;
+                const xMin = Math.min(s1.x, s2.x);
+                const xMax = Math.max(s1.x, s2.x);
+                const zonaProtecao = 8; // Margem de proteção ao redor de cada borne
+
+                // Se ambos são topo/base, o canal fica entre eles
+                if (isTopo && isTopo2) {
+                    // Primeiro tenta o canal natural
+                    const yBase1 = info1.lado === "base" ? yOrigem1 + SAIDA_BORNE : yOrigem1 - SAIDA_BORNE;
+                    const yBase2 = info2.lado === "base" ? yOrigem2 + SAIDA_BORNE : yOrigem2 - SAIDA_BORNE;
+                    const yMinCanal = Math.min(yBase1, yBase2);
+                    const yMaxCanal = Math.max(yBase1, yBase2);
+                    
+                    // Verifica se o canal natural cruza algum borne
+                    let yCandidato = alinharCanal((yOrigem1 + yOrigem2) / 2);
+                    if (yCandidato < yMinCanal) yCandidato = alinharCanal(yMinCanal);
+                    if (yCandidato > yMaxCanal) yCandidato = alinharCanal(yMaxCanal);
+                    
+                    // Testa se cruza algum borne existente
+                    let tenta = 0;
+                    let melhorY = yCandidato;
+                    const direcao = s1.y < s2.y ? 1 : -1;
+                    while (tenta < 15) {
+                        const yTeste = yCandidato + (tenta * PASSO_MALHA * direcao);
+                        let cruza = false;
+                        for (const b of bornesExistentes) {
+                            if (Math.abs(b.x - s1.x) > zonaProtecao && Math.abs(b.x - s2.x) > zonaProtecao) continue;
+                            // Só importa se o borne está na mesma faixa X do segmento
+                            if (b.x >= xMin - zonaProtecao && b.x <= xMax + zonaProtecao) {
+                                if (b.y >= Math.min(yOrigem1, yOrigem2) && b.y <= Math.max(yOrigem1, yOrigem2)) {
+                                    if (Math.abs(yTeste - b.y) < zonaProtecao + 2) {
+                                        cruza = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (!cruza) { melhorY = yTeste; break; }
+                        tenta++;
+                    }
+                    return melhorY;
+                }
+                return null;
+            }
+
+            // ─── REGRA 2: Fios paralelos não seguem o mesmo caminho ───
+            // Calcula o offset lateral para fios que saem da mesma posição X
+            function calcularOffsetFiosParalelos(conexaoAtual, idx, conexoesAtuais) {
+                if (idx === undefined) return 0;
+                const p1Atual = obterCoordenadasAbsolutasTerminal(conexaoAtual.id1, conexaoAtual.t1);
+                const p2Atual = obterCoordenadasAbsolutasTerminal(conexaoAtual.id2, conexaoAtual.t2);
+                if (!p1Atual || !p2Atual) return 0;
+                
+                let contadorMesmoOrigem = 0;
+                let contadorMesmoDestino = 0;
+                
+                for (let i = 0; i < idx; i++) {
+                    const c = conexoesAtuais[i];
+                    const p1 = obterCoordenadasAbsolutasTerminal(c.id1, c.t1);
+                    const p2 = obterCoordenadasAbsolutasTerminal(c.id2, c.t2);
+                    if (!p1 || !p2) continue;
+                    
+                    // Verifica se os bornes de origem são próximos (mesma coluna)
+                    const origemProxima = Math.abs(p1.x - p1Atual.x) < 15 && Math.abs(p1.y - p1Atual.y) < 10;
+                    const destinoProximo = Math.abs(p2.x - p2Atual.x) < 15 && Math.abs(p2.y - p2Atual.y) < 10;
+                    
+                    if (origemProxima) contadorMesmoOrigem++;
+                    if (destinoProximo) contadorMesmoDestino++;
+                }
+                
+                // Aplica offset baseado na contagem
+                return Math.max(contadorMesmoOrigem, contadorMesmoDestino) * 12;
+            }
+
+            if (baseBase) {
+                const yCanal = alinharCanal(Math.max(s1.y, s2.y) + afastamento);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            if (topoTopo) {
+                const yCanal = alinharCanal(Math.min(s1.y, s2.y) - afastamento);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            const comp24V = new Set([
+                "sensor-indutivo", "sensor-capacitivo",
+                "sensor-capacitivo-cilindrico", "bobinaInterface24V",
+                "fonte-chaveada"
+            ]);
+            const tipo1 = info1 && info1.comp ? info1.comp.tipo : "";
+            const tipo2 = info2 && info2.comp ? info2.comp.tipo : "";
+            const comp1_24V = comp24V.has(tipo1);
+            const comp2_24V = comp24V.has(tipo2);
+
+            if (entreBaseTopo) {
+                const yMenor = Math.min(s1.y, s2.y);
+                const yMaior = Math.max(s1.y, s2.y);
+                let yCanal;
+
+                if ((comp1_24V && comp2_24V) || (comp1_24V && lado1 === "base" && comp2_24V && lado2 === "topo")) {
+                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
+                        yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
+                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
+                        if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                    } else {
+                        yCanal = alinharCanal(yMenor - afastamento);
+                    }
+                } else if (comp1_24V && lado1 === "topo" && !comp2_24V) {
+                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
+                        yCanal = alinharCanal(yMenor - afastamento - (pista * PASSO_MALHA));
+                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
+                        if (yCanal > limiteInferior) {
+                            yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
+                            if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                        }
+                    } else {
+                        yCanal = alinharCanal(yMenor - afastamento);
+                    }
+                } else if (comp1_24V && lado1 === "base" && !comp2_24V) {
+                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
+                        yCanal = alinharCanal(yMaior + afastamento + (pista * PASSO_MALHA));
+                        const limiteSuperior = alinharCanal(yMenor + SAIDA_BORNE);
+                        if (yCanal < limiteSuperior) {
+                            yCanal = alinharCanal(yMaior - SAIDA_BORNE - pista * PASSO_MALHA);
+                            if (yCanal < limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
+                        }
+                    } else {
+                        yCanal = alinharCanal(yMaior + afastamento);
+                    }
+                } else if (comp2_24V && lado2 === "topo" && !comp1_24V) {
+                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
+                        yCanal = alinharCanal(yMenor - afastamento - (pista * PASSO_MALHA));
+                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
+                        if (yCanal > limiteInferior) {
+                            yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
+                            if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                        }
+                    } else {
+                        yCanal = alinharCanal(yMenor - afastamento);
+                    }
+                } else if (comp2_24V && lado2 === "base" && !comp1_24V) {
+                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
+                        yCanal = alinharCanal(yMaior + afastamento + (pista * PASSO_MALHA));
+                        const limiteSuperior = alinharCanal(yMenor + SAIDA_BORNE);
+                        if (yCanal < limiteSuperior) {
+                            yCanal = alinharCanal(yMaior - SAIDA_BORNE - pista * PASSO_MALHA);
+                            if (yCanal < limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
+                        }
+                    } else {
+                        yCanal = alinharCanal(yMaior + afastamento);
+                    }
+                } else {
+                    // v117.0: Canal inteligente com regras de não-cruzamento de bornes
+                    if (yMaior - yMenor >= SAIDA_BORNE * 3) {
+                        yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
+                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
+                        if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                    } else {
+                        yCanal = lado1 === "base" ? alinharCanal(s1.y + afastamento) : alinharCanal(s2.y + afastamento);
+                    }
+                }
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA PRINCIPAL v117.0: Bornes topo/base — roteamento em Z suave
+            // ═══════════════════════════════════════════════════════════════════
+            if (lado1 === "topo" || lado1 === "base") {
+                // Determina a direção de saída (cima ou baixo)
+                const ySaida1 = lado1 === "topo" ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
+                
+                if (lado2 === "topo" || lado2 === "base") {
+                    // Ambos são topo/base → rota em Z com canal entre os componentes
+                    const ySaida2 = lado2 === "topo" ? (s2.y - SAIDA_BORNE) : (s2.y + SAIDA_BORNE);
+                    
+                    // Canal padrão: meio entre as saídas
+                    let yCanal = alinharCanal((ySaida1 + ySaida2) / 2);
+                    
+                    // Ajuste por pista para fios paralelos
+                    yCanal = yCanal + (pista * PASSO_MALHA);
+                    
+                    // REGRA: Verificar se o canal cruza algum borne de fios na mesma faixa X
+                    // Coleta todos os bornes existentes na mesma coluna
+                    const bornesExistentes = bornesNaMesmaColuna(conexoes);
+                    
+                    // Testa se o canal horizontal cruza algum borne
+                    const xMin = Math.min(s1.x, s2.x) - 10;
+                    const xMax = Math.max(s1.x, s2.x) + 10;
+                    let zonaProtecao = 8;
+                    
+                    let tenta = 0;
+                    let yFinal = yCanal;
+                    const direcao = s1.y < s2.y ? 1 : -1;
+                    
+                    while (tenta < 20) {
+                        const yTeste = yCanal + (tenta * PASSO_MALHA * direcao);
+                        let cruzaBorne = false;
+                        
+                        for (const b of bornesExistentes) {
+                            // Ignora os bornes deste próprio fio
+                            if (Math.abs(b.x - s1.x) < 2 && Math.abs(b.y - s1.y) < 2) continue;
+                            if (Math.abs(b.x - s2.x) < 2 && Math.abs(b.y - s2.y) < 2) continue;
+                            
+                            // Verifica se o borne está na faixa X do segmento horizontal
+                            if (b.x >= xMin && b.x <= xMax) {
+                                // Verifica se o borne está ENTRE a origem e o destino verticalmente
+                                const yEntre = (direcao > 0) 
+                                    ? (b.y > Math.min(s1.y, s2.y) && b.y < Math.max(s1.y, s2.y))
+                                    : (b.y < Math.max(s1.y, s2.y) && b.y > Math.min(s1.y, s2.y));
+                                
+                                if (yEntre && Math.abs(yTeste - b.y) < zonaProtecao) {
+                                    cruzaBorne = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!cruzaBorne) { yFinal = yTeste; break; }
+                        tenta++;
+                    }
+                    
+                    // Garante que o canal não saia da área entre os componentes
+                    const yLimiteTopo = Math.max(Math.min(ySaida1, ySaida2) + SAIDA_BORNE, Math.min(s1.y, s2.y) + SAIDA_BORNE);
+                    const yLimiteBase = Math.min(Math.max(ySaida1, ySaida2) - SAIDA_BORNE, Math.max(s1.y, s2.y) - SAIDA_BORNE);
+                    if (direcao > 0 && yFinal > yLimiteBase) yFinal = yLimiteBase;
+                    if (direcao < 0 && yFinal < yLimiteTopo) yFinal = yLimiteTopo;
+                    
+                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yFinal)} L ${fmt(s2.x)} ${fmt(yFinal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+                }
+                
+                // Destino lateral — saída vertical primeiro, depois horizontal
+                if (comp1_24V && lado1 === "topo") {
+                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+                }
+                if (comp1_24V && lado1 === "base") {
+                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+                }
+                
+                // v117.0: Para destino lateral, faz o fio descer até a mesma altura do destino
+                // para evitar que o segmento horizontal cruze bornes de outros fios
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            } else if (lado1 === "esquerda" || lado1 === "direita") {
+                // Formato em "L" ou "Z" horizontal para bornes laterais
+                const distSeguranca = 30;
+                const xSaida = lado1 === "esquerda" ? (s1.x - distSeguranca) : (s1.x + distSeguranca);
+                
+                if (lado2 === "esquerda" || lado2 === "direita") {
+                    const xDestinoSaida = lado2 === "esquerda" ? (s2.x - distSeguranca) : (s2.x + distSeguranca);
+                    const xMedio = (xSaida + xDestinoSaida) / 2;
+                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xSaida)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s2.y)} L ${fmt(xDestinoSaida)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+                }
+                
+                const xCurva = (lado1 === "direita") ? Math.max(xSaida, s2.x) : Math.min(xSaida, s2.x);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // Caso genérico (sem lado específico)
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+            return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
         }
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-    }
-    
-    // Direções opostas (base + topo): um desce, outro sobe
-    // Canal no meio entre os dois componentes
-    const offset = pista * ROTA_MALHA;
-    const yCanal = rMalha(out1.y + offset);
-    return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-}
 
-// ===== ROTA VERTICAL 24V (sensores, bobinas, fonte) =====
-function rotaVertical24V(s1, s2, lado1, lado2, pista, tipo1, tipo2) {
-    const c1 = ROTA_24V.has(tipo1);
-    const c2 = ROTA_24V.has(tipo2);
-    const offset = ROTA_SAIDA + pista * ROTA_MALHA;
-    
-    if (c1 && !c2) {
-        // Só o borne 1 é 24V → sai pela direção do 24V
-        const yCanal = lado1 === "topo" ? s1.y - offset : s1.y + offset;
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-    }
-    if (c2 && !c1) {
-        const yCanal = lado2 === "topo" ? s2.y - offset : s2.y + offset;
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(yCanal)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-    }
-    // Ambos 24V ou nenhum → usa rotaVertical padrão
-    return rotaVertical(s1, s2, lado1, lado2, pista);
-}
-
-// ===== ROTA LATERAL (esquerda + esquerda, direita + direita, esquerda + direita) =====
-function rotaLateral(s1, s2, lado1, lado2) {
-    const dy = Math.abs(s2.y - s1.y);
-    
-    // Mesma altura → reta horizontal
-    if (dy < 2) {
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s1.y)}`;
-    }
-    
-    const out1 = sairDoBorne(s1, lado1, s2);
-    const out2 = sairDoBorne(s2, lado2, s1);
-    
-    const dir1 = out1.x > s1.x ? "direita" : "esquerda";
-    const dir2 = out2.x > s2.x ? "direita" : "esquerda";
-    
-    if (dir1 === dir2) {
-        // Mesmo lado → canal vertical compartilhado
-        const xCanal = dir1 === "direita" ? Math.max(out1.x, out2.x) : Math.min(out1.x, out2.x);
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-    }
-    
-    // Lados opostos → canal no meio (4 curvas, inevitável)
-    const xCanal = rMalha((out1.x + out2.x) / 2);
-    return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(out1.x)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s1.y)} L ${rFmt(xCanal)} ${rFmt(s2.y)} L ${rFmt(out2.x)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-}
-
-// ===== ROTA MISTA (lateral + vertical) =====
-// Formato L limpo: horizontal → vertical → horizontal (3 curvas, 4 pontos)
-// OU: vertical → horizontal → vertical (3 curvas, 4 pontos)
-function rotaMista(s1, s2, lado1, lado2) {
-    const v1 = (lado1 === "topo" || lado1 === "base");
-    const h1 = (lado1 === "esquerda" || lado1 === "direita");
-    const v2 = (lado2 === "topo" || lado2 === "base");
-    const h2 = (lado2 === "esquerda" || lado2 === "direita");
-    
-    if (v1 && h2) {
-        // Borne1 vertical → Borne2 lateral
-        // Fio: sai vertical do borne1 → desce/sobe até a altura do borne2
-        // depois horizontal → entra lateral no borne2
-        // Canal horizontal fica na altura do borne lateral (s2.y)
-        const x2 = lado2 === "esquerda" ? s2.x - ROTA_DIST_LAT : s2.x + ROTA_DIST_LAT;
-        // Sai perpendicular do borne1 (20px), depois vai reto até s2.y, horizontal, entra lateral
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)} L ${rFmt(x2)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-    }
-    
-    if (h1 && v2) {
-        // Borne1 lateral → Borne2 vertical
-        // Fio: sai horizontal do borne1 → vertical → entra no borne2
-        const x1 = lado1 === "esquerda" ? s1.x - ROTA_DIST_LAT : s1.x + ROTA_DIST_LAT;
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(x1)} ${rFmt(s1.y)} L ${rFmt(x1)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-    }
-    
-    // Fallback
-    return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-}
-
-// ===== FUNÇÃO PRINCIPAL: Roteador =====
-function gerarCaminhoOrtogonal(p1, p2, desvio = 0, info1 = null, info2 = null) {
-    const s1 = { x: p1.x, y: p1.y };
-    const s2 = { x: p2.x, y: p2.y };
-    const dx = s2.x - s1.x;
-    const dy = s2.y - s1.y;
-    const mesmaVertical = Math.abs(dx) < 2;
-    const mesmaHorizontal = Math.abs(dy) < 2;
-    const lado1 = info1 ? info1.lado : "meio";
-    const lado2 = info2 ? info2.lado : "meio";
-    const pista = Math.max(0, Math.abs(parseInt(desvio, 10) || 0));
-    
-    const v1 = (lado1 === "topo" || lado1 === "base");
-    const v2 = (lado2 === "topo" || lado2 === "base");
-    const h1 = (lado1 === "esquerda" || lado1 === "direita");
-    const h2 = (lado2 === "esquerda" || lado2 === "direita");
-    
-    const tipo1 = info1 && info1.comp ? info1.comp.tipo : "";
-    const tipo2 = info2 && info2.comp ? info2.comp.tipo : "";
-    
-    // CASO 1: Alinhados → reta
-    if (mesmaVertical) return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)}`;
-    if (mesmaHorizontal) return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s1.y)}`;
-    
-    // CASO 2: Ambos laterais
-    if (h1 && h2) return rotaLateral(s1, s2, lado1, lado2);
-    
-    // CASO 3: Ambos verticais
-    if (v1 && v2) {
-        if (ROTA_24V.has(tipo1) || ROTA_24V.has(tipo2)) {
-            return rotaVertical24V(s1, s2, lado1, lado2, pista, tipo1, tipo2);
-        }
-        return rotaVertical(s1, s2, lado1, lado2, pista);
-    }
-    
-    // CASO 4: Misto
-    if ((v1 && h2) || (h1 && v2)) {
-        return rotaMista(s1, s2, lado1, lado2);
-    }
-    
-    // CASO 5: Fallback
-    if (Math.abs(dx) >= Math.abs(dy)) {
-        return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s1.x)} ${rFmt(s2.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-    }
-    return `M ${rFmt(s1.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s1.y)} L ${rFmt(s2.x)} ${rFmt(s2.y)}`;
-}
-
-
-
-                        function extrairPontosCaminhoOrtogonal(d) {
+        function extrairPontosCaminhoOrtogonal(d) {
             const numeros = String(d || "").match(/-?\d+(?:\.\d+)?/g);
             if (!numeros || numeros.length < 4) return [];
             const pontos = [];
