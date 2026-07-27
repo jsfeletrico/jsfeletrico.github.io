@@ -4710,76 +4710,33 @@ function abrirPainelConfiguracao(comp) {
             const comp2_24V = comp24V.has(tipo2);
 
             // ═══════════════════════════════════════════════════════════════════
-            // CASO: Base ↔ Topo (ex: rede base → disjuntor topo)
+            // CASO: Base ↔ Topo (ex: rede base → disjuntor topo, ou alimentação → fonte)
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA FUNDAMENTAL v117.0: O fio SEMPRE desce do borne de origem.
+            // Se origem é "base" → canal fica ABAIXO do borne (yCanal > s1.y)
+            // Se origem é "topo" → canal fica ACIMA do borne (yCanal < s1.y)
+            // O canal deve ficar entre os dois bornes, NUNCA fora deles.
             // ═══════════════════════════════════════════════════════════════════
             if (entreBaseTopo) {
-                const yMenor = Math.min(s1.y, s2.y);
-                const yMaior = Math.max(s1.y, s2.y);
+                // Canal padrão: logo abaixo do borne base (ou acima do topo)
                 let yCanal;
-
-                // Componentes 24V — comportamento especial
-                if ((comp1_24V && comp2_24V) || (comp1_24V && lado1 === "base" && comp2_24V && lado2 === "topo")) {
-                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
-                        yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
-                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
-                        if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
-                    } else {
-                        yCanal = alinharCanal(yMenor - afastamento);
-                    }
-                } else if (comp1_24V && lado1 === "topo" && !comp2_24V) {
-                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
-                        yCanal = alinharCanal(yMenor - afastamento - (pista * PASSO_MALHA));
-                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
-                        if (yCanal > limiteInferior) {
-                            yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
-                            if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
-                        }
-                    } else {
-                        yCanal = alinharCanal(yMenor - afastamento);
-                    }
-                } else if (comp1_24V && lado1 === "base" && !comp2_24V) {
-                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
-                        yCanal = alinharCanal(yMaior + afastamento + (pista * PASSO_MALHA));
-                        const limiteSuperior = alinharCanal(yMenor + SAIDA_BORNE);
-                        if (yCanal < limiteSuperior) {
-                            yCanal = alinharCanal(yMaior - SAIDA_BORNE - pista * PASSO_MALHA);
-                            if (yCanal < limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
-                        }
-                    } else {
-                        yCanal = alinharCanal(yMaior + afastamento);
-                    }
-                } else if (comp2_24V && lado2 === "topo" && !comp1_24V) {
-                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
-                        yCanal = alinharCanal(yMenor - afastamento - (pista * PASSO_MALHA));
-                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
-                        if (yCanal > limiteInferior) {
-                            yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
-                            if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
-                        }
-                    } else {
-                        yCanal = alinharCanal(yMenor - afastamento);
-                    }
-                } else if (comp2_24V && lado2 === "base" && !comp1_24V) {
-                    if (yMaior - yMenor >= SAIDA_BORNE * 4) {
-                        yCanal = alinharCanal(yMaior + afastamento + (pista * PASSO_MALHA));
-                        const limiteSuperior = alinharCanal(yMenor + SAIDA_BORNE);
-                        if (yCanal < limiteSuperior) {
-                            yCanal = alinharCanal(yMaior - SAIDA_BORNE - pista * PASSO_MALHA);
-                            if (yCanal < limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
-                        }
-                    } else {
-                        yCanal = alinharCanal(yMaior + afastamento);
-                    }
+                
+                if (lado1 === "base") {
+                    // Borne de origem está na BASE → fio desce para baixo
+                    // Canal fica abaixo do borne de origem
+                    yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                    // Limite: não pode passar do borne de destino
+                    const limiteInferior = alinharCanal(s2.y - SAIDA_BORNE);
+                    if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
                 } else {
-                    // v117.0: ESCADINHA — canal inteligente sem cruzar bornes
-                    if (yMaior - yMenor >= SAIDA_BORNE * 3) {
-                        yCanal = alinharCanal(yMenor + SAIDA_BORNE + pista * PASSO_MALHA);
-                        const limiteInferior = alinharCanal(yMaior - SAIDA_BORNE);
-                        if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
-                    } else {
-                        yCanal = lado1 === "base" ? alinharCanal(s1.y + afastamento) : alinharCanal(s2.y + afastamento);
-                    }
+                    // Borne de origem está no TOPO → fio sobe para cima
+                    // Canal fica acima do borne de origem
+                    yCanal = alinharCanal(s1.y - SAIDA_BORNE - pista * PASSO_MALHA);
+                    // Limite: não pode passar do borne de destino
+                    const limiteSuperior = alinharCanal(s2.y + SAIDA_BORNE);
+                    if (yCanal < limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
                 }
+                
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
