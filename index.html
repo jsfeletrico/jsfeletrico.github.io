@@ -4648,14 +4648,13 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 3: ALIMENTAÇÃO TRIFÁSICA (RST) — Escadinha inteligente
+            // REGRA 3: ALIMENTAÇÃO TRIFÁSICA (RST) — Escadinha paralela 30px
             // Fio desce RETO do borne (vertical), vira em Y diferente por fase,
-            // desce RETO no destino.
+            // andam PARALELOS com 30px de distância entre cada um.
             //   → Destino à DIREITA: T quebra primeiro, depois S, depois R
             //   → Destino à ESQUERDA: R quebra primeiro, depois S, depois T
-            // Espaçamento entre degraus = 30 px (= distância entre bornes)
-            // Usa info1.terminal.x (posição RELATIVA dentro do componente),
-            // NUNCA s1.x (posição absoluta na tela).
+            // ESPAÇAMENTO FIXO = 30 px (= distância entre bornes)
+            // NÃO adiciona pista — a posição do borne já define o canal.
             // ───────────────────────────────────────────────────────────────────
             if (tipo1 === "rede-trifasica-n-pe") {
                 const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
@@ -4663,32 +4662,27 @@ function abrirPainelConfiguracao(comp) {
                 const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
                 // posicaoRelativa: 0=R, 1=S, 2=T
 
-                const espacamentoDegrau = 30;
-                const baseY = s1.y + SAIDA_BORNE; // mínimo para sair do borne
+                const espacamento = 30; // FIXO = distância entre bornes
+                const baseY = s1.y + SAIDA_BORNE;
 
                 const destinoADireita = s2.x >= s1.x;
                 let yCanal;
 
                 if (destinoADireita) {
-                    // T (pos=2) quebra primeiro → menor yCanal (mais perto do borne)
-                    // S (pos=1) no meio
-                    // R (pos=0) quebra por último → maior yCanal (mais longe)
-                    yCanal = baseY + ((2 - posicaoRelativa) * espacamentoDegrau);
+                    // T (pos=2) quebra primeiro → menor yCanal
+                    yCanal = baseY + ((2 - posicaoRelativa) * espacamento);
                 } else {
                     // R (pos=0) quebra primeiro → menor yCanal
-                    // S (pos=1) no meio
-                    // T (pos=2) quebra por último → maior yCanal
-                    yCanal = baseY + (posicaoRelativa * espacamentoDegrau);
+                    yCanal = baseY + (posicaoRelativa * espacamento);
                 }
 
-                // Garantir que nunca sobe (fica sempre abaixo do borne de origem)
                 if (yCanal < baseY) yCanal = baseY;
 
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha paralela
+            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha paralela 30px
             // Aplica a mesma escadinha da Rede RST para TODOS os componentes
             // trifásicos de força: disjuntor, contator, relé térmico,
             // soft-starter, inversor, motor, fusível tripolar.
@@ -4696,49 +4690,28 @@ function abrirPainelConfiguracao(comp) {
             // Lógica:
             //   → Destino à DIREITA: borne mais à direita quebra primeiro
             //   → Destino à ESQUERDA: borne mais à esquerda quebra primeiro
-            // Cada fio tem sua própria pista (0, 1, 2) para andar PARALELO
-            // sem sobrepor. Espaçamento entre degraus = 10 px (= pista * 10).
-            // Usa info1.terminal.x (posição RELATIVA dentro do componente).
-            // NÃO afeta bornes laterais (DI, A1, A2, PE, IN, GND, etc.)
+            // ESPAÇAMENTO FIXO = 30 px (= distância entre bornes)
+            // NÃO adiciona pista — a posição do borne já define o canal.
+            // Cada fio mantém os mesmos 30px do início ao fim.
             // VERIFICADA ANTES DA REGRA 2 para funcionar mesmo alinhados.
             // ───────────────────────────────────────────────────────────────────
             if (tiposForcaTrifasica.includes(tipo1) && lado1 !== "esquerda" && lado1 !== "direita") {
                 const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
-                const espacamentoDegrau = 30;
+                const espacamento = 30; // FIXO = distância entre bornes
 
-                // Determinar direção do fio baseado no lado do borne de origem
                 const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
                 const subir = (lado1 === "topo");
-
                 const destinoADireita = s2.x >= s1.x;
 
-                // Calcular a posição relativa do borne (0=esquerda, 1=meio, 2=direita)
                 const posicaoRelativa = Math.round((terminalX - 20) / 30);
 
-                // Offset da escadinha: borne mais à direita quebra primeiro (menor Y)
-                let offsetEscadinha;
-                if (destinoADireita) {
-                    // Destino à direita: borne mais à direita (pos=2) quebra primeiro
-                    offsetEscadinha = (2 - posicaoRelativa) * espacamentoDegrau;
-                } else {
-                    // Destino à esquerda: borne mais à esquerda (pos=0) quebra primeiro
-                    offsetEscadinha = posicaoRelativa * espacamentoDegrau;
-                }
-
-                // Adicionar a pista de cada fio para andar paralelo
-                // pista 0 = canal base, pista 1 = 10px abaixo, pista 2 = 20px abaixo
-                const offsetPista = pista * 10;
-
                 let yCanal;
-                if (subir) {
-                    // Fio sobe: yCanal deve ser menor (mais acima) que baseY
-                    yCanal = baseY - offsetEscadinha - offsetPista;
+                if (destinoADireita) {
+                    yCanal = baseY + ((2 - posicaoRelativa) * espacamento);
                 } else {
-                    // Fio desce: yCanal deve ser maior (mais abaixo) que baseY
-                    yCanal = baseY + offsetEscadinha + offsetPista;
+                    yCanal = baseY + (posicaoRelativa * espacamento);
                 }
 
-                // Garantir que o yCanal fica dentro dos limites válidos
                 if (subir) {
                     if (yCanal > baseY) yCanal = baseY;
                 } else {
