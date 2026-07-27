@@ -4474,16 +4474,22 @@ function abrirPainelConfiguracao(comp) {
                     const margemX = (comp.tipo === 'sensor-indutivo' || comp.tipo === 'sensor-capacitivo') ? 5 : 20;
                     // sensor-capacitivo-cilindrico agora é 40x40, bornes em y=6
                     const dimSensorCap = (comp.tipo === 'sensor-capacitivo-cilindrico') ? 40 : 30;
-                    // Ajuste v117.0: Bornes de componentes de alimentação (rede RST, L1, L2, L3, N, PE, +/-)
-                    // ficam SEMPRE como "base" para forçar o fio a descer reto do borne
-                    // independentemente da posição X do borne
+                    // Ajuste v117.1: Bornes de componentes de alimentação (rede RST, L1, L2, L3, N, PE, +/-)
+                    // Respeitam a rotação do componente:
+                    //   rot=0  (vertical normal)   → base (desce reto para baixo)
+                    //   rot=180 (vertical invertido)→ topo (sobe reto para cima)
+                    //   rot=90  (horizontal)        → direita (sai na horizontal)
+                    //   rot=270 (horizontal invertido) → esquerda (sai na horizontal)
                     const tiposAlimentacao = [
                         "rede-trifasica-n-pe", "alimentacao-fase", "alimentacao-fase-l2",
                         "alimentacao-fase-l3", "alimentacao-neutro", "alimentacao-terra",
                         "alimentacao-positivo", "alimentacao-negativo"
                     ];
                     if (tiposAlimentacao.includes(comp.tipo)) {
-                        lado = "base";
+                        if (rot === 0) lado = "base";        // Desce reto para baixo
+                        else if (rot === 180) lado = "topo";  // Sobe reto para cima
+                        else if (rot === 90) lado = "direita"; // Sai na horizontal
+                        else if (rot === 270) lado = "esquerda"; // Sai na horizontal
                     }
                     // Ajuste v116.5: Garantir que bornes pneumáticos em y=24 ou y=28 sejam "topo" e y=72 ou y=83 sejam "base"
                     else if (terminal.y <= 35 || (comp.tipo === "sensor-capacitivo-cilindrico" && terminal.y <= 10)) lado = "topo";
