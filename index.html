@@ -4596,22 +4596,38 @@ function abrirPainelConfiguracao(comp) {
             if (mesmaHorizontal) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s1.y)}`;
 
             // ═══════════════════════════════════════════════════════════════════
-            // REGRA 2: Bornes laterais (esquerda/direita) — inversor, soft-starter
-            // Fio sai horizontalmente do borne lateral
+            // REGRA 2: Bornes laterais (esquerda/direita) — inversor, soft-starter, válvula 5/2
+            // REGRA FUNDAMENTAL: O fio SEMPRE sai HORIZONTAL primeiro, depois sobe/desce.
+            // NUNCA sobe/desce primeiro (isso cruzaria sobre outros bornes do mesmo componente).
+            // Ex: DI2 (x=86.5, y=58) → Botoeira (x=200, y=10)
+            //   Path correto: M 86.5 58 L 116.5 58 L 116.5 10 L 200 10
+            //   (sai horizontal 30px para a direita, depois sobe reto)
             // ═══════════════════════════════════════════════════════════════════
             if (lado1 === "esquerda" || lado1 === "direita") {
                 const distSeguranca = 30;
                 const xSaida = lado1 === "esquerda" ? (s1.x - distSeguranca) : (s1.x + distSeguranca);
                 
+                // ═══════════════════════════════════════════════════════════════
+                // Caso: Borne lateral → outro borne lateral
+                // ═══════════════════════════════════════════════════════════════
                 if (lado2 === "esquerda" || lado2 === "direita") {
                     const xDestinoSaida = lado2 === "esquerda" ? (s2.x - distSeguranca) : (s2.x + distSeguranca);
+                    // Ambos saem horizontal, vão até o meio, sobem/descem, depois entram
                     const xMedio = (xSaida + xDestinoSaida) / 2;
                     return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xSaida)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s2.y)} L ${fmt(xDestinoSaida)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
                 }
                 
-                // Borne lateral → topo/base: sai horizontalmente, desce, entra no destino
-                const xCurva = (lado1 === "direita") ? Math.max(xSaida, s2.x) : Math.min(xSaida, s2.x);
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+                // ═══════════════════════════════════════════════════════════════
+                // Caso: Borne lateral → topo/base (ex: DI2 → Botoeira, DI1 → Contator)
+                // O fio SEMPRE sai horizontal primeiro (30px), depois vai vertical.
+                // O ponto de curva fica na saída horizontal (xSaida), não no destino.
+                // ═══════════════════════════════════════════════════════════════
+                // Path: M s1.x s1.y L xSaida s1.y L xSaida s2.y L s2.x s2.y
+                // Isso garante:
+                // 1. Sai horizontal do borne (não cruza sobre DI1)
+                // 2. Depois sobe/desce na vertical
+                // 3. Chega no destino horizontalmente
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xSaida)} ${fmt(s1.y)} L ${fmt(xSaida)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
             // ═══════════════════════════════════════════════════════════════════
