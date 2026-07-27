@@ -4683,106 +4683,65 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha SEMPRE
-            // Aplica a mesma escadinha da Rede RST para TODOS os componentes
-            // trifásicos de força: disjuntor, contator, relé térmico,
-            // soft-starter, inversor, motor, fusível tripolar.
-            //
-            // Lógica:
-            //   → Destino à DIREITA: borne mais à direita quebra primeiro
-            //   → Destino à ESQUERDA: borne mais à esquerda quebra primeiro
-            // ESPAÇAMENTO = 30 px (= distância entre bornes)
-            // Se o espaço vertical for curto, usar 1/3 do espaço como degrau.
-            // Cada fio mantém a mesma distância entre eles.
-            // NUNCA usar linha reta — sempre escadinha.
-            // VERIFICADA ANTES DA REGRA 2 para funcionar mesmo alinhados.
+            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA
+            // MESMA LÓGICA DA REGRA 3 — sem adaptação, sem espacamento variável.
             // ───────────────────────────────────────────────────────────────────
             if (tiposForcaTrifasica.includes(tipo1) && lado1 !== "esquerda" && lado1 !== "direita") {
                 const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
-                const posicaoRelativa = Math.round((terminalX - 20) / 30);
+                const passoRef = 30; // R=20, S=50, T=80
+                const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
+                // posicaoRelativa: 0=R, 1=S, 2=T
 
-                // baseY = ponto de saída do borne (como na Regra 3)
-                // Para base: s1.y + SAIDA_BORNE (abaixo do borne)
-                // Para topo: s1.y - SAIDA_BORNE (acima do borne)
+                const espacamento = 30; // FIXO = distância entre bornes
+
+                // baseY: ponto de saída do borne
+                // Para base (desce): s1.y + SAIDA_BORNE
+                // Para topo (sobe): s1.y - SAIDA_BORNE
                 const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
 
-                // Limite do destino: o fio não pode ultrapassar o borne de destino
-                // Para destino topo: o fio deve chegar no s2.y (não precisa de margem)
-                // Para destino base: o fio deve chegar no s2.y (não precisa de margem)
+                // Limite: nunca ultrapassar o destino
                 const limiteDestinoY = s2.y;
 
-                // Espaço vertical disponível entre baseY e o destino
-                const espacoVertical = (lado1 === "topo")
-                    ? (baseY - limiteDestinoY)  // subindo: baseY > limiteDestinoY
-                    : (limiteDestinoY - baseY);  // descendo: limiteDestinoY > baseY
-
-                // Degrau: ideal 30px, mas se espaço for curto usar 1/3 do espaço
-                const espacamento = espacoVertical >= 90 ? 30 : Math.max(5, Math.floor(Math.max(espacoVertical, 15) / 3));
-
                 const destinoADireita = s2.x >= s1.x;
-
-                // Calcular a direção do offset
-                let direcaoOffset;
-                if (destinoADireita) {
-                    direcaoOffset = (2 - posicaoRelativa) * espacamento;
-                } else {
-                    direcaoOffset = posicaoRelativa * espacamento;
-                }
-
-                // Calcular yCanal
                 let yCanal;
-                if (lado1 === "topo") {
-                    // Subindo: yCanal diminui
-                    yCanal = baseY - direcaoOffset;
-                    if (yCanal < limiteDestinoY) yCanal = limiteDestinoY;
-                    if (yCanal > baseY) yCanal = baseY;
+
+                if (destinoADireita) {
+                    yCanal = baseY + ((2 - posicaoRelativa) * espacamento);
                 } else {
-                    // Descendo: yCanal aumenta
-                    yCanal = baseY + direcaoOffset;
-                    if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
-                    if (yCanal < baseY) yCanal = baseY;
+                    yCanal = baseY + (posicaoRelativa * espacamento);
                 }
+
+                if (yCanal < baseY) yCanal = baseY;
+                if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
 
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
             // ───────────────────────────────────────────────────────────────────
             // REGRA 3b: DESTINO é SS/INV mas origem NÃO é trifásica
-            // Ex: Alimentação → R/S/T do inversor (3 fios)
-            // Cada fio deve ter seu yCanal baseado na posição do borne de origem.
+            // MESMA LÓGICA DA REGRA 3 — sem adaptação.
             // ───────────────────────────────────────────────────────────────────
             if ((tipo2 === "inversor-frequencia" || tipo2 === "soft-starter") && lado1 !== "esquerda" && lado1 !== "direita") {
                 const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
-                const posicaoRelativa = Math.round((terminalX - 20) / 30);
+                const passoRef = 30;
+                const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
+
+                const espacamento = 30; // FIXO
 
                 const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
                 const limiteDestinoY = s2.y;
 
-                const espacoVertical = (lado1 === "topo")
-                    ? (baseY - limiteDestinoY)
-                    : (limiteDestinoY - baseY);
-
-                const espacamento = espacoVertical >= 90 ? 30 : Math.max(5, Math.floor(Math.max(espacoVertical, 15) / 3));
-
                 const destinoADireita = s2.x >= s1.x;
-
-                let direcaoOffset;
-                if (destinoADireita) {
-                    direcaoOffset = (2 - posicaoRelativa) * espacamento;
-                } else {
-                    direcaoOffset = posicaoRelativa * espacamento;
-                }
-
                 let yCanal;
-                if (lado1 === "topo") {
-                    yCanal = baseY - direcaoOffset;
-                    if (yCanal < limiteDestinoY) yCanal = limiteDestinoY;
-                    if (yCanal > baseY) yCanal = baseY;
+
+                if (destinoADireita) {
+                    yCanal = baseY + ((2 - posicaoRelativa) * espacamento);
                 } else {
-                    yCanal = baseY + direcaoOffset;
-                    if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
-                    if (yCanal < baseY) yCanal = baseY;
+                    yCanal = baseY + (posicaoRelativa * espacamento);
                 }
+
+                if (yCanal < baseY) yCanal = baseY;
+                if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
 
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
