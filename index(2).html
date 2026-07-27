@@ -4649,19 +4649,39 @@ function abrirPainelConfiguracao(comp) {
             ];
             
             if (tiposAlimentacao.includes(tipo1)) {
-                // Canal horizontal: abaixo do borne de origem
-                let yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                // Formato ESCADINHA com degraus:
+                // Cada fio desce reto do borne, vira horizontal em um Y diferente,
+                // e desce reto no destino. Os fios ficam separados (não amontoados).
+                // T quebra primeiro (desce menos), S no meio, R por último (desce mais)
+                // A distância entre degraus = distância entre bornes (30px)
                 
-                // Limitar o canal: nunca acima do borne de origem, nunca abaixo do borne de destino
-                const limiteAbaixoOrigem = alinharCanal(s1.y + SAIDA_BORNE);
-                if (yCanal < limiteAbaixoOrigem) yCanal = limiteAbaixoOrigem;
-                if (s2.y > s1.y + SAIDA_BORNE * 2) {
-                    // Destino bem abaixo: canal entre origem e destino
-                    const limiteAcimaDestino = alinharCanal(s2.y - SAIDA_BORNE);
-                    if (yCanal > limiteAcimaDestino) yCanal = limiteAcimaDestino;
+                // Calcular posição relativa do borne dentro do componente
+                // info1.terminal.x é a posição DENTRO do componente (R=20, S=50, T=80)
+                const terminalX = info1 && info1.terminal ? info1.terminal.x : 0;
+                const passoRef = 30; // distância entre bornes trifásicos
+                // Posição relativa: 0=R(x=20), 1=S(x=50), 2=T(x=80)
+                const posicaoRelativa = Math.round((terminalX - 20) / passoRef);
+                
+                // Espaçamento entre degraus: 10px (pequeno para caber em qualquer espaço)
+                const espacamento = 10;
+                
+                // T (posicaoRelativa=2): desce menos antes de virar
+                // S (posicaoRelativa=1): desce um pouco mais
+                // R (posicaoRelativa=0): desce mais antes de virar
+                const yPrimeiroDegrau = s1.y + SAIDA_BORNE;
+                const maxPosicao = 2;
+                let yCanal = yPrimeiroDegrau + ((maxPosicao - posicaoRelativa) * espacamento);
+                
+                // Limitar: não pode ficar abaixo do borne de destino
+                if (s2.y > s1.y) {
+                    const limiteDestino = s2.y - SAIDA_BORNE;
+                    if (yCanal > limiteDestino) yCanal = limiteDestino;
                 }
                 
-                // Formato: desce reto → vira horizontal → desce reto
+                // Garantir que o canal está abaixo do borne de origem
+                if (yCanal < s1.y + 5) yCanal = s1.y + 5;
+                
+                // Formato: desce reto → vira horizontal (degrau) → desce reto
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
