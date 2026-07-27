@@ -4566,11 +4566,8 @@ function abrirPainelConfiguracao(comp) {
 
         function gerarCaminhoOrtogonal(p1, p2, desvio = 0, info1 = null, info2 = null) {
             // ═══════════════════════════════════════════════════════════════════
-            // v117.0 — ROTEAMENTO ESCADINHA (desce → vira → desce)
-            // ═══════════════════════════════════════════════════════════════════
-            // Regra FUNDAMENTAL: O fio NUNCA sai lateralmente do borne.
-            // O fio SEMPRE desce reto do borne primeiro, depois faz a curva.
-            // Formato: ↓ (desce reto) → (vira horizontal) ↓ (desce até destino)
+            // v117.0 — ROTEAMENTO MODULAR POR COMPONENTE
+            // Cada tipo de componente tem sua própria regra isolada.
             // ═══════════════════════════════════════════════════════════════════
             const s1 = { x: p1.x, y: p1.y };
             const s2 = { x: p2.x, y: p2.y };
@@ -4592,195 +4589,15 @@ function abrirPainelConfiguracao(comp) {
 
             const fmt = (v) => Math.round(v * 10) / 10;
 
-            // Se já está perfeitamente alinhado, fica reto
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA 1: Se perfeitamente alinhado (vertical ou horizontal)
+            // ═══════════════════════════════════════════════════════════════════
             if (mesmaVertical) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)}`;
             if (mesmaHorizontal) return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s2.x)} ${fmt(s1.y)}`;
 
-            const baseBase = lado1 === "base" && lado2 === "base";
-            const topoTopo = lado1 === "topo" && lado2 === "topo";
-            const entreBaseTopo =
-                (lado1 === "base" && lado2 === "topo") ||
-                (lado1 === "topo" && lado2 === "base");
-
             // ═══════════════════════════════════════════════════════════════════
-            // FUNÇÃO: Calcular Y do canal horizontal evitando cruzar sobre bornes
-            // ═══════════════════════════════════════════════════════════════════
-            function calcularCanalHorizontal(s1, s2, info1, info2) {
-                // O canal horizontal deve ficar abaixo do borne de origem (base) + SAIDA_BORNE
-                // e acima do borne de destino (topo) - SAIDA_BORNE
-                // Se ambos são base, fica abaixo de ambos
-                // Se ambos são topo, fica acima de ambos
-                // Se base-topo, fica entre eles
-                
-                const xMin = Math.min(s1.x, s2.x);
-                const xMax = Math.max(s1.x, s2.x);
-                const zonaProtecao = 8; // margem ao redor de cada borne
-                
-                // Coleta todos os bornes de todas as conexões para verificação
-                const bornesExistentes = [];
-                conexoes.forEach((c) => {
-                    const pi1 = obterCoordenadasAbsolutasTerminal(c.id1, c.t1);
-                    const pi2 = obterCoordenadasAbsolutasTerminal(c.id2, c.t2);
-                    if (pi1) bornesExistentes.push({ x: pi1.x, y: pi1.y });
-                    if (pi2) bornesExistentes.push({ x: pi2.x, y: pi2.y });
-                });
-                
-                // Determina o Y de saída do borne de origem
-                const ySaida1 = lado1 === "topo" ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
-                const ySaida2 = lado2 === "topo" ? (s2.y - SAIDA_BORNE) : (s2.y + SAIDA_BORNE);
-                
-                // Canal candidato inicial: logo abaixo/acima do borne de origem
-                const yBase1 = lado1 === "base" ? alinharCanal(s1.y + SAIDA_BORNE) : alinharCanal(s1.y - SAIDA_BORNE);
-                
-                // Direção de descida
-                const descendo = s1.y < s2.y;
-                
-                // Testa se o canal cruza algum borne entre os dois pontos
-                let yCanal = yBase1;
-                let tenta = 0;
-                const direcao = descendo ? 1 : -1;
-                
-                while (tenta < 15) {
-                    const yTeste = yBase1 + (tenta * PASSO_MALHA * direcao);
-                    
-                    // Se o fio não desloca horizontalmente no Y do canal, não precisa verificar
-                    const precisaVerificar = Math.abs(s1.x - s2.x) > 5;
-                    
-                    if (precisaVerificar) {
-                        let cruzaBorne = false;
-                        for (const b of bornesExistentes) {
-                            // Ignora os bornes deste próprio fio
-                            if (Math.abs(b.x - s1.x) < 2 && Math.abs(b.y - s1.y) < 2) continue;
-                            if (Math.abs(b.x - s2.x) < 2 && Math.abs(b.y - s2.y) < 2) continue;
-                            
-                            // Verifica se o borne está na faixa X do segmento horizontal do fio
-                            if (b.x >= xMin - zonaProtecao && b.x <= xMax + zonaProtecao) {
-                                // Verifica se o borne está ENTRE a origem e o destino (verticalmente)
-                                const yMinEntre = Math.min(s1.y, s2.y);
-                                const yMaxEntre = Math.max(s1.y, s2.y);
-                                const bEstaEntre = b.y > yMinEntre && b.y < yMaxEntre;
-                                
-                                if (bEstaEntre && Math.abs(yTeste - b.y) < zonaProtecao) {
-                                    cruzaBorne = true;
-                                    break;
-                                }
-                            }
-                        }
-                        
-                        if (cruzaBorne) {
-                            tenta++;
-                            continue;
-                        }
-                    }
-                    
-                    yCanal = yTeste;
-                    break;
-                }
-                
-                return yCanal;
-            }
-
-            // ═══════════════════════════════════════════════════════════════════
-            // CASO: Bornes base-base (ex: dois borne no fundo de componentes)
-            // ═══════════════════════════════════════════════════════════════════
-            if (baseBase) {
-                // Desce do borne, vira, desce até o outro borne
-                const yCanal = alinharCanal(Math.max(s1.y, s2.y) + afastamento);
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-
-            // ═══════════════════════════════════════════════════════════════════
-            // CASO: Bornes topo-topo (ex: dois borne no topo de componentes)
-            // ═══════════════════════════════════════════════════════════════════
-            if (topoTopo) {
-                // Sobe do borne, vira, desce até o outro borne
-                const yCanal = alinharCanal(Math.min(s1.y, s2.y) - afastamento);
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-
-            // Componentes 24V
-            const comp24V = new Set([
-                "sensor-indutivo", "sensor-capacitivo",
-                "sensor-capacitivo-cilindrico", "bobinaInterface24V",
-                "fonte-chaveada"
-            ]);
-            const tipo1 = info1 && info1.comp ? info1.comp.tipo : "";
-            const tipo2 = info2 && info2.comp ? info2.comp.tipo : "";
-            const comp1_24V = comp24V.has(tipo1);
-            const comp2_24V = comp24V.has(tipo2);
-
-            // ═══════════════════════════════════════════════════════════════════
-            // CASO: Base ↔ Topo (ex: rede base → disjuntor topo, ou alimentação → fonte)
-            // ═══════════════════════════════════════════════════════════════════
-            // REGRA FUNDAMENTAL v117.0: O fio SEMPRE desce do borne de origem.
-            // Se origem é "base" → canal fica ABAIXO do borne (yCanal > s1.y)
-            // Se origem é "topo" → canal fica ACIMA do borne (yCanal < s1.y)
-            // O canal deve ficar entre os dois bornes, NUNCA fora deles.
-            // ═══════════════════════════════════════════════════════════════════
-            if (entreBaseTopo) {
-                // Canal padrão: logo abaixo do borne base (ou acima do topo)
-                let yCanal;
-                
-                if (lado1 === "base") {
-                    // Borne de origem está na BASE → fio desce para baixo
-                    // Canal fica abaixo do borne de origem
-                    yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
-                    // Limite: não pode passar do borne de destino
-                    const limiteInferior = alinharCanal(s2.y - SAIDA_BORNE);
-                    if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
-                } else {
-                    // Borne de origem está no TOPO → fio sobe para cima
-                    // Canal fica acima do borne de origem
-                    yCanal = alinharCanal(s1.y - SAIDA_BORNE - pista * PASSO_MALHA);
-                    // Limite: não pode passar do borne de destino
-                    const limiteSuperior = alinharCanal(s2.y + SAIDA_BORNE);
-                    if (yCanal < limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
-                }
-                
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-
-            // ═══════════════════════════════════════════════════════════════════
-            // CASO PRINCIPAL: Bornes topo/base — formato ESCADINHA
-            // DESCENTE RETO → CURVA → DESCENTE RETO
-            // ═══════════════════════════════════════════════════════════════════
-            if (lado1 === "topo" || lado1 === "base") {
-                // Determina a direção de saída do borne
-                const ySaida1 = lado1 === "topo" ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
-                
-                if (lado2 === "topo" || lado2 === "base") {
-                    // Ambos topo/base → canal entre os componentes
-                    const yCanal = calcularCanalHorizontal(s1, s2, info1, info2);
-                    
-                    // Aplica ajuste de pista para fios paralelos
-                    const yAjustado = yCanal + (pista * PASSO_MALHA);
-                    
-                    // Garante que o canal fique entre os bornes
-                    const yMinValido = Math.min(s1.y, s2.y) + SAIDA_BORNE;
-                    const yMaxValido = Math.max(s1.y, s2.y) - SAIDA_BORNE;
-                    let yFinal = yAjustado;
-                    if (yFinal < yMinValido) yFinal = yMinValido;
-                    if (yFinal > yMaxValido) yFinal = yMaxValido;
-                    
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yFinal)} L ${fmt(s2.x)} ${fmt(yFinal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
-                
-                // Destino lateral — mesmo formato escadinha
-                // Desce do borne de origem até a altura do destino, vira e vai até o destino
-                if (comp1_24V && lado1 === "topo") {
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
-                if (comp1_24V && lado1 === "base") {
-                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(ySaida1)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                }
-                
-                // ESCADINHA: Desce reto até a altura do destino, vira e vai até ele
-                // Isso garante que o fio NUNCA saia lateralmente do borne
-                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-            }
-            
-            // ═══════════════════════════════════════════════════════════════════
-            // CASO: Bornes laterais (esquerda/direita) — ex: inversor, soft-starter
+            // REGRA 2: Bornes laterais (esquerda/direita) — inversor, soft-starter
+            // Fio sai horizontalmente do borne lateral
             // ═══════════════════════════════════════════════════════════════════
             if (lado1 === "esquerda" || lado1 === "direita") {
                 const distSeguranca = 30;
@@ -4797,7 +4614,183 @@ function abrirPainelConfiguracao(comp) {
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
 
-            // Caso genérico (sem lado específico)
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA 3: ALIMENTAÇÃO como origem (rede RST, L1, L2, L3, N, PE, +, -)
+            // A alimentação SEMPRE é "base" — o fio desce reto do borne.
+            // Formato: ↓ desce reto → → vira horizontal → ↓ desce reto no destino
+            // ═══════════════════════════════════════════════════════════════════
+            const tiposAlimentacao = [
+                "rede-trifasica-n-pe", "alimentacao-fase", "alimentacao-fase-l2",
+                "alimentacao-fase-l3", "alimentacao-neutro", "alimentacao-terra",
+                "alimentacao-positivo", "alimentacao-negativo"
+            ];
+            const tipo1 = info1 && info1.comp ? info1.comp.tipo : "";
+            const tipo2 = info2 && info2.comp ? info2.comp.tipo : "";
+            
+            const origemAlimentacao = tiposAlimentacao.includes(tipo1);
+            
+            if (origemAlimentacao) {
+                // O borne de origem é "base" — o fio SEMPRE desce
+                // Canal horizontal fica logo abaixo do borne de origem
+                let yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                
+                // Se o destino está acima da origem, o canal fica entre eles
+                if (s2.y < s1.y) {
+                    // Destino está acima — canal deve ficar entre s2.y+SAIDA_BORNE e s1.y-SAIDA_BORNE
+                    yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                    const limiteSuperior = alinharCanal(s2.y - SAIDA_BORNE);
+                    if (yCanal > limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
+                } else {
+                    // Destino está abaixo — canal fica abaixo da origem
+                    const limiteInferior = alinharCanal(s2.y - SAIDA_BORNE);
+                    if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                }
+                
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA 4: FONTE CHAVEADA como destino (bornes L, N, PE no topo)
+            // Quando a alimentação conecta no topo da fonte, o fio desce da 
+            // alimentação e entra no topo da fonte.
+            // Quando a saída da fonte conecta em outro componente, o fio desce
+            // dos bornes +1/-1/+2/-2 (base) da fonte.
+            // ═══════════════════════════════════════════════════════════════════
+            const tiposFonte = ["fonte-chaveada"];
+            const fonteComoDestino = tiposFonte.includes(tipo2);
+            
+            if (fonteComoDestino && lado1 === "base") {
+                // Alimentação ou outro componente base → borne L/N/PE da fonte (topo)
+                // Fio desce do borne de origem, vira, desce no topo da fonte
+                let yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                const limiteInferior = alinharCanal(s2.y - SAIDA_BORNE);
+                if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            if (fonteComoDestino && lado1 === "topo") {
+                // Borne topo → borne topo da fonte (ambos no topo)
+                // Canal fica acima de ambos
+                let yCanal = alinharCanal(Math.min(s1.y, s2.y) - afastamento - pista * PASSO_MALHA);
+                const limiteInferior = alinharCanal(Math.max(s1.y, s2.y) + SAIDA_BORNE);
+                if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA 5: INVERSOR/SOFT-STARTER como destino (bornes R/S/T no topo, 
+            // U/V/W na base, bornes de comando na lateral direita)
+            // ═══════════════════════════════════════════════════════════════════
+            const tiposPotencia = ["inversor-frequencia", "soft-starter"];
+            const potenciaComoDestino = tiposPotencia.includes(tipo2);
+            
+            if (potenciaComoDestino && lado2 === "topo") {
+                // Qualquer coisa → bornes R/S/T do inversor/soft-starter (topo)
+                // Formato escadinha: desce do borne de origem → vira → desce no topo
+                let yCanal;
+                if (lado1 === "base") {
+                    // Origem base → destino topo: canal entre os dois
+                    yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                    const limiteInferior = alinharCanal(s2.y - SAIDA_BORNE);
+                    if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                } else {
+                    // Origem topo → destino topo: canal acima de ambos
+                    yCanal = alinharCanal(Math.min(s1.y, s2.y) - SAIDA_BORNE - pista * PASSO_MALHA);
+                    const limiteInferior = alinharCanal(Math.max(s1.y, s2.y) + SAIDA_BORNE);
+                    if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                }
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            if (potenciaComoDestino && lado2 === "base") {
+                // Qualquer coisa → bornes U/V/W do inversor/soft-starter (base)
+                let yCanal;
+                if (lado1 === "base") {
+                    yCanal = alinharCanal(Math.max(s1.y, s2.y) + afastamento + pista * PASSO_MALHA);
+                } else {
+                    yCanal = alinharCanal(s1.y - SAIDA_BORNE - pista * PASSO_MALHA);
+                    const limiteInferior = alinharCanal(s2.y - SAIDA_BORNE);
+                    if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                }
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            if (potenciaComoDestino && (lado2 === "esquerda" || lado2 === "direita")) {
+                // Borne lateral do inversor (DI, A1, A2, PE, IN, GND)
+                if (lado1 === "base" || lado1 === "topo") {
+                    const ySaida1 = lado1 === "topo" ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
+                    const xCurva = (lado1 === "direita") ? Math.max(s1.x, s2.x) : Math.min(s1.x, s2.x);
+                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s1.y)} L ${fmt(xCurva)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+                }
+                if (lado1 === "esquerda" || lado1 === "direita") {
+                    const distSeguranca = 30;
+                    const xSaida = lado1 === "esquerda" ? (s1.x - distSeguranca) : (s1.x + distSeguranca);
+                    const xDestinoSaida = lado2 === "esquerda" ? (s2.x - distSeguranca) : (s2.x + distSeguranca);
+                    const xMedio = (xSaida + xDestinoSaida) / 2;
+                    return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(xSaida)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s1.y)} L ${fmt(xMedio)} ${fmt(s2.y)} L ${fmt(xDestinoSaida)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+                }
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA 6: SENSORES 24V (indutivo, capacitivo) como origem ou destino
+            // Bornes no topo do sensor
+            // ═══════════════════════════════════════════════════════════════════
+            const comp24V = new Set([
+                "sensor-indutivo", "sensor-capacitivo",
+                "sensor-capacitivo-cilindrico", "bobinaInterface24V"
+            ]);
+            const comp1_24V = comp24V.has(tipo1);
+            const comp2_24V = comp24V.has(tipo2);
+
+            if (comp1_24V || comp2_24V) {
+                // Para componentes 24V, usar o formato escadinha padrão
+                // baseado nos lados dos bornes
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA 7: BASE-TOPo (caso padrão para todos os demais)
+            // Desjuntor, Contator, Relé, Botoeira, Bobina, Motor, etc.
+            // Formato escadinha: desce/sobe do borne → vira → desce/sobe no destino
+            // ═══════════════════════════════════════════════════════════════════
+            const baseBase = lado1 === "base" && lado2 === "base";
+            const topoTopo = lado1 === "topo" && lado2 === "topo";
+            const entreBaseTopo =
+                (lado1 === "base" && lado2 === "topo") ||
+                (lado1 === "topo" && lado2 === "base");
+
+            if (entreBaseTopo) {
+                // Base → Topo ou Topo → Base
+                // Canal fica entre os dois bornes
+                let yCanal;
+                if (lado1 === "base") {
+                    // Origem na base → fio desce
+                    yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                    const limiteInferior = alinharCanal(s2.y - SAIDA_BORNE);
+                    if (yCanal > limiteInferior) yCanal = limiteInferior + (yCanal - limiteInferior);
+                } else {
+                    // Origem no topo → fio sobe
+                    yCanal = alinharCanal(s1.y - SAIDA_BORNE - pista * PASSO_MALHA);
+                    const limiteSuperior = alinharCanal(s2.y + SAIDA_BORNE);
+                    if (yCanal < limiteSuperior) yCanal = limiteSuperior + (yCanal - limiteSuperior);
+                }
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            if (baseBase) {
+                // Ambos na base → canal abaixo de ambos
+                const yCanal = alinharCanal(Math.max(s1.y, s2.y) + afastamento + pista * PASSO_MALHA);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            if (topoTopo) {
+                // Ambos no topo → canal acima de ambos
+                const yCanal = alinharCanal(Math.min(s1.y, s2.y) - afastamento - pista * PASSO_MALHA);
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // REGRA 8: Caso genérico fallback
+            // ═══════════════════════════════════════════════════════════════════
             if (Math.abs(dx) >= Math.abs(dy)) {
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(s2.y)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
