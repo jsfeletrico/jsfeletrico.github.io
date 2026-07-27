@@ -8240,7 +8240,21 @@ desenho.appendChild(el);
                         desvio = pistasBaseTopoFixas[con.id];
                     }
 
-                    let d = gerarCaminhoOrtogonal(p1, p2, desvio, info1, info2);
+                    // V117.1.3: Forçar pista=0 para fios de alimentação trifásica
+                    // para que todos compartilhem o mesmo canal Y (paralelismo perfeito)
+                    // Isso NÃO afeta a Regra 0 (bornes laterais)
+                    let pistaFinal = desvio;
+                    const tipoOrigem = info1 && info1.comp ? info1.comp.tipo : "";
+                    const tiposAlim = [
+                        "rede-trifasica-n-pe", "alimentacao-fase", "alimentacao-fase-l2",
+                        "alimentacao-fase-l3", "alimentacao-neutro", "alimentacao-terra",
+                        "alimentacao-positivo", "alimentacao-negativo"
+                    ];
+                    if (tiposAlim.includes(tipoOrigem)) {
+                        pistaFinal = 0;
+                    }
+                    
+                    let d = gerarCaminhoOrtogonal(p1, p2, pistaFinal, info1, info2);
                     if (Number.isFinite(con.ajusteCanalY)) {
                         d = aplicarAjusteManualHorizontal(d, con.ajusteCanalY);
                     }
