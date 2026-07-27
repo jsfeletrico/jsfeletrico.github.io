@@ -4474,11 +4474,22 @@ function abrirPainelConfiguracao(comp) {
                     const margemX = (comp.tipo === 'sensor-indutivo' || comp.tipo === 'sensor-capacitivo') ? 5 : 20;
                     // sensor-capacitivo-cilindrico agora é 40x40, bornes em y=6
                     const dimSensorCap = (comp.tipo === 'sensor-capacitivo-cilindrico') ? 40 : 30;
+                    // Ajuste v117.0: Bornes de componentes de alimentação (rede RST, L1, L2, L3, N, PE, +/-)
+                    // ficam SEMPRE como "base" para forçar o fio a descer reto do borne
+                    // independentemente da posição X do borne
+                    const tiposAlimentacao = [
+                        "rede-trifasica-n-pe", "alimentacao-fase", "alimentacao-fase-l2",
+                        "alimentacao-fase-l3", "alimentacao-neutro", "alimentacao-terra",
+                        "alimentacao-positivo", "alimentacao-negativo"
+                    ];
+                    if (tiposAlimentacao.includes(comp.tipo)) {
+                        lado = "base";
+                    }
                     // Ajuste v116.5: Garantir que bornes pneumáticos em y=24 ou y=28 sejam "topo" e y=72 ou y=83 sejam "base"
-                    if (terminal.y <= 35 || (comp.tipo === "sensor-capacitivo-cilindrico" && terminal.y <= 10)) lado = "topo";
+                    else if (terminal.y <= 35 || (comp.tipo === "sensor-capacitivo-cilindrico" && terminal.y <= 10)) lado = "topo";
                     else if (terminal.y >= 70) lado = "base";
-	                    else if (terminal.x <= margemX) lado = "esquerda";
-	                    else if (terminal.x >= dim.largura - margemX) lado = "direita";
+				    else if (terminal.x <= margemX) lado = "esquerda";
+				    else if (terminal.x >= dim.largura - margemX) lado = "direita";
                     
                     // MELHORIA: Forçar bornes + e - da válvula 5/2 como "esquerda" para saída horizontal
                     if (comp.tipo === "valvula-5-2" && (terminal.t === "+" || terminal.t === "-")) {
