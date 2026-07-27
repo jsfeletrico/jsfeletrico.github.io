@@ -4688,7 +4688,7 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha inteligente
+            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha paralela
             // Aplica a mesma escadinha da Rede RST para TODOS os componentes
             // trifásicos de força: disjuntor, contator, relé térmico,
             // soft-starter, inversor, motor, fusível tripolar.
@@ -4696,7 +4696,8 @@ function abrirPainelConfiguracao(comp) {
             // Lógica:
             //   → Destino à DIREITA: borne mais à direita quebra primeiro
             //   → Destino à ESQUERDA: borne mais à esquerda quebra primeiro
-            // Espaçamento entre degraus = 30 px (= distância entre bornes)
+            // Cada fio tem sua própria pista (0, 1, 2) para andar PARALELO
+            // sem sobrepor. Espaçamento entre degraus = 10 px (= pista * 10).
             // Usa info1.terminal.x (posição RELATIVA dentro do componente).
             // NÃO afeta bornes laterais (DI, A1, A2, PE, IN, GND, etc.)
             // VERIFICADA ANTES DA REGRA 2 para funcionar mesmo alinhados.
@@ -4710,31 +4711,37 @@ function abrirPainelConfiguracao(comp) {
                 const subir = (lado1 === "topo");
 
                 const destinoADireita = s2.x >= s1.x;
-                let yCanal;
 
+                // Calcular a posição relativa do borne (0=esquerda, 1=meio, 2=direita)
+                const posicaoRelativa = Math.round((terminalX - 20) / 30);
+
+                // Offset da escadinha: borne mais à direita quebra primeiro (menor Y)
+                let offsetEscadinha;
                 if (destinoADireita) {
-                    // Borne mais à direita (maior terminal.x) quebra primeiro
-                    // → menor yCanal (mais perto do borne)
-                    const posicaoRelativa = Math.round((terminalX - 20) / 30);
-                    yCanal = baseY + ((2 - posicaoRelativa) * espacamentoDegrau);
+                    // Destino à direita: borne mais à direita (pos=2) quebra primeiro
+                    offsetEscadinha = (2 - posicaoRelativa) * espacamentoDegrau;
                 } else {
-                    // Borne mais à esquerda (menor terminal.x) quebra primeiro
-                    const posicaoRelativa = Math.round((terminalX - 20) / 30);
-                    yCanal = baseY + (posicaoRelativa * espacamentoDegrau);
+                    // Destino à esquerda: borne mais à esquerda (pos=0) quebra primeiro
+                    offsetEscadinha = posicaoRelativa * espacamentoDegrau;
+                }
+
+                // Adicionar a pista de cada fio para andar paralelo
+                // pista 0 = canal base, pista 1 = 10px abaixo, pista 2 = 20px abaixo
+                const offsetPista = pista * 10;
+
+                let yCanal;
+                if (subir) {
+                    // Fio sobe: yCanal deve ser menor (mais acima) que baseY
+                    yCanal = baseY - offsetEscadinha - offsetPista;
+                } else {
+                    // Fio desce: yCanal deve ser maior (mais abaixo) que baseY
+                    yCanal = baseY + offsetEscadinha + offsetPista;
                 }
 
                 // Garantir que o yCanal fica dentro dos limites válidos
-                // IMPORTANTE: Quando a distância entre origem e destino é muito curta
-                // (ex: borne base do SS em y=125 vs borne topo do INV em y=11),
-                // NÃO truncar agressivamente. Manter os degraus da escadinha intactos
-                // e apenas garantir que o fio não entre dentro do componente de destino.
                 if (subir) {
-                    // Fio sobe: yCanal deve ser menor (mais acima) que baseY
-                    // Não truncar além do limite — deixar a escadinha funcionar
                     if (yCanal > baseY) yCanal = baseY;
                 } else {
-                    // Fio desce: yCanal deve ser maior (mais abaixo) que baseY
-                    // Não truncar além do limite — deixar a escadinha funcionar
                     if (yCanal < baseY) yCanal = baseY;
                 }
 
@@ -8255,28 +8262,10 @@ desenho.appendChild(el);
                         desvio = pistasBaseTopoFixas[con.id];
                     }
 
-                    // V118.1: Forçar pista=0 para fios trifásicos (alimentação + força)
-                    // para que todos compartilhem o mesmo canal Y (paralelismo perfeito)
-                    // e a escadinha funcione corretamente.
-                    // Verifica AMBOS os lados (o usuário pode clicar em qualquer ordem)
+                    // V118.3: Cada fio trifásico mantém sua pista (0, 1, 2)
+                    // para andar paralelo sem sobrepor.
+                    // A Regra 3a usa pista * 10 para separar os canais Y.
                     let pistaFinal = desvio;
-                    const tipoOrigem = info1 && info1.comp ? info1.comp.tipo : "";
-                    const tipoDestino = info2 && info2.comp ? info2.comp.tipo : "";
-                    const tiposAlim = [
-                        "rede-trifasica-n-pe", "alimentacao-fase", "alimentacao-fase-l2",
-                        "alimentacao-fase-l3", "alimentacao-neutro", "alimentacao-terra",
-                        "alimentacao-positivo", "alimentacao-negativo"
-                    ];
-                    const tiposForcaTrif = [
-                        "disjuntor-motor", "disjuntor-motor-imagem", "disjuntor-tripolar",
-                        "rele-termico", "contator-triplo", "fusivel-tripolar",
-                        "soft-starter", "inversor-frequencia",
-                        "motor-trifasico-pe", "motor-6-bornes", "motor-dahlander"
-                    ];
-                    if (tiposAlim.includes(tipoOrigem) || tiposAlim.includes(tipoDestino) ||
-                        tiposForcaTrif.includes(tipoOrigem) || tiposForcaTrif.includes(tipoDestino)) {
-                        pistaFinal = 0;
-                    }
                     
                     let d = gerarCaminhoOrtogonal(p1, p2, pistaFinal, info1, info2);
                     if (Number.isFinite(con.ajusteCanalY)) {
