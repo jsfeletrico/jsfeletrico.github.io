@@ -4608,6 +4608,13 @@ function abrirPainelConfiguracao(comp) {
 
             const ehAlimentacao = tiposAlimentacao.includes(tipo1) || tiposAlimentacao.includes(tipo2);
 
+            const tiposForcaTrifasica = [
+                "disjuntor-motor", "disjuntor-motor-imagem", "disjuntor-tripolar",
+                "rele-termico", "contator-triplo", "fusivel-tripolar",
+                "soft-starter", "inversor-frequencia",
+                "motor-trifasico-pe", "motor-6-bornes", "motor-dahlander"
+            ];
+
             // ───────────────────────────────────────────────────────────────────
             // REGRA 1: Borne lateral (esquerda/direita) como ORIGEM
             // Sai HORIZONTAL 30 px primeiro, depois vertical.
@@ -4682,6 +4689,59 @@ function abrirPainelConfiguracao(comp) {
 
                 // Garantir que nunca sobe (fica sempre abaixo do borne de origem)
                 if (yCanal < baseY) yCanal = baseY;
+
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // ───────────────────────────────────────────────────────────────────
+            // REGRA 3a: COMPONENTES TRIFÁSICOS DE FORÇA — Escadinha inteligente
+            // Aplica a mesma escadinha da Rede RST para TODOS os componentes
+            // trifásicos de força: disjuntor, contator, relé térmico,
+            // soft-starter, inversor, motor, fusível tripolar.
+            //
+            // Lógica:
+            //   → Destino à DIREITA: borne mais à direita quebra primeiro
+            //   → Destino à ESQUERDA: borne mais à esquerda quebra primeiro
+            // Espaçamento entre degraus = 30 px (= distância entre bornes)
+            // Usa info1.terminal.x (posição RELATIVA dentro do componente).
+            // NÃO afeta bornes laterais (DI, A1, A2, PE, IN, GND, etc.)
+            // ───────────────────────────────────────────────────────────────────
+            if (tiposForcaTrifasica.includes(tipo1) && lado1 !== "esquerda" && lado1 !== "direita") {
+                const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
+                const espacamentoDegrau = 30;
+
+                // Determinar direção do fio baseado no lado do borne de origem
+                const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
+                const subir = (lado1 === "topo");
+
+                const destinoADireita = s2.x >= s1.x;
+                let yCanal;
+
+                if (destinoADireita) {
+                    // Borne mais à direita (maior terminal.x) quebra primeiro
+                    // → menor yCanal (mais perto do borne)
+                    const posicaoRelativa = Math.round((terminalX - 20) / 30);
+                    yCanal = baseY + ((2 - posicaoRelativa) * espacamentoDegrau);
+                } else {
+                    // Borne mais à esquerda (menor terminal.x) quebra primeiro
+                    const posicaoRelativa = Math.round((terminalX - 20) / 30);
+                    yCanal = baseY + (posicaoRelativa * espacamentoDegrau);
+                }
+
+                // Garantir que o yCanal fica dentro dos limites válidos
+                // IMPORTANTE: Quando a distância entre origem e destino é muito curta
+                // (ex: borne base do SS em y=125 vs borne topo do INV em y=11),
+                // NÃO truncar agressivamente. Manter os degraus da escadinha intactos
+                // e apenas garantir que o fio não entre dentro do componente de destino.
+                if (subir) {
+                    // Fio sobe: yCanal deve ser menor (mais acima) que baseY
+                    // Não truncar além do limite — deixar a escadinha funcionar
+                    if (yCanal > baseY) yCanal = baseY;
+                } else {
+                    // Fio desce: yCanal deve ser maior (mais abaixo) que baseY
+                    // Não truncar além do limite — deixar a escadinha funcionar
+                    if (yCanal < baseY) yCanal = baseY;
+                }
 
                 return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
             }
@@ -8193,8 +8253,9 @@ desenho.appendChild(el);
                         desvio = pistasBaseTopoFixas[con.id];
                     }
 
-                    // V117.2: Forçar pista=0 para fios de alimentação trifásica
+                    // V118.1: Forçar pista=0 para fios trifásicos (alimentação + força)
                     // para que todos compartilhem o mesmo canal Y (paralelismo perfeito)
+                    // e a escadinha funcione corretamente.
                     // Verifica AMBOS os lados (o usuário pode clicar em qualquer ordem)
                     let pistaFinal = desvio;
                     const tipoOrigem = info1 && info1.comp ? info1.comp.tipo : "";
@@ -8204,7 +8265,14 @@ desenho.appendChild(el);
                         "alimentacao-fase-l3", "alimentacao-neutro", "alimentacao-terra",
                         "alimentacao-positivo", "alimentacao-negativo"
                     ];
-                    if (tiposAlim.includes(tipoOrigem) || tiposAlim.includes(tipoDestino)) {
+                    const tiposForcaTrif = [
+                        "disjuntor-motor", "disjuntor-motor-imagem", "disjuntor-tripolar",
+                        "rele-termico", "contator-triplo", "fusivel-tripolar",
+                        "soft-starter", "inversor-frequencia",
+                        "motor-trifasico-pe", "motor-6-bornes", "motor-dahlander"
+                    ];
+                    if (tiposAlim.includes(tipoOrigem) || tiposAlim.includes(tipoDestino) ||
+                        tiposForcaTrif.includes(tipoOrigem) || tiposForcaTrif.includes(tipoDestino)) {
                         pistaFinal = 0;
                     }
                     
