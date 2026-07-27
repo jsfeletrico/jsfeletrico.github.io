@@ -4747,6 +4747,47 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
+            // REGRA 3b: DESTINO é SS/INV mas origem NÃO é trifásica
+            // Ex: Alimentação → R/S/T do inversor (3 fios)
+            // Cada fio deve ter seu yCanal baseado na posição do borne de origem.
+            // ───────────────────────────────────────────────────────────────────
+            if ((tipo2 === "inversor-frequencia" || tipo2 === "soft-starter") && lado1 !== "esquerda" && lado1 !== "direita") {
+                const terminalX = info1 && info1.terminal ? info1.terminal.x : 50;
+                const posicaoRelativa = Math.round((terminalX - 20) / 30);
+
+                const baseY = (lado1 === "topo") ? (s1.y - SAIDA_BORNE) : (s1.y + SAIDA_BORNE);
+                const limiteDestinoY = s2.y;
+
+                const espacoVertical = (lado1 === "topo")
+                    ? (baseY - limiteDestinoY)
+                    : (limiteDestinoY - baseY);
+
+                const espacamento = espacoVertical >= 90 ? 30 : Math.max(5, Math.floor(Math.max(espacoVertical, 15) / 3));
+
+                const destinoADireita = s2.x >= s1.x;
+
+                let direcaoOffset;
+                if (destinoADireita) {
+                    direcaoOffset = (2 - posicaoRelativa) * espacamento;
+                } else {
+                    direcaoOffset = posicaoRelativa * espacamento;
+                }
+
+                let yCanal;
+                if (lado1 === "topo") {
+                    yCanal = baseY - direcaoOffset;
+                    if (yCanal < limiteDestinoY) yCanal = limiteDestinoY;
+                    if (yCanal > baseY) yCanal = baseY;
+                } else {
+                    yCanal = baseY + direcaoOffset;
+                    if (yCanal > limiteDestinoY) yCanal = limiteDestinoY;
+                    if (yCanal < baseY) yCanal = baseY;
+                }
+
+                return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
+            }
+
+            // ───────────────────────────────────────────────────────────────────
             // REGRA 2: Alinhamento perfeito → linha reta
             // (DEPOIS das regras trifásicas, para não sobrepor a escadinha)
             // ───────────────────────────────────────────────────────────────────
@@ -4784,7 +4825,7 @@ function abrirPainelConfiguracao(comp) {
             if (tipo2 === "fonte-chaveada") {
                 if (lado2 === "topo") {
                     if (lado1 === "base") {
-                        let yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
+                        let yCanal = alinharCanal(s1.y + SAIDA_BORNE);
                         const limite = alinharCanal(s2.y - SAIDA_BORNE);
                         if (yCanal > limite) yCanal = limite;
                         return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
@@ -4812,43 +4853,10 @@ function abrirPainelConfiguracao(comp) {
             }
 
             // ───────────────────────────────────────────────────────────────────
-            // REGRA 5: DESTINO é inversor-frequencia ou soft-starter
-            // Bornes R/S/T no topo (y=11), U/V/W na base (y=125).
-            // Bornes laterais (DI, A1, A2, etc.) já tratados na Regra 1b.
+            // REGRA 5: REMOVIDA — A Regra 3a já trata destino SS/INV via origem trifásica.
+            // A Regra 5 antiga usava pista*PASSO_MALHA que causava bagunça nos fios trifásicos.
+            // Agora a Regra 3a cuida de TODAS as conexões trifásicas (base→topo, topo→base).
             // ───────────────────────────────────────────────────────────────────
-            if (tipo2 === "inversor-frequencia" || tipo2 === "soft-starter") {
-                if (lado2 === "topo") {
-                    if (lado1 === "base") {
-                        let yCanal = alinharCanal(s1.y + SAIDA_BORNE + pista * PASSO_MALHA);
-                        const limite = alinharCanal(s2.y - SAIDA_BORNE);
-                        if (yCanal > limite) yCanal = limite;
-                        return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                    }
-                    if (lado1 === "topo") {
-                        let yCanal = alinharCanal(Math.min(s1.y, s2.y) - afastamento);
-                        return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                    }
-                    // Alimentação (base) → R/S/T (topo do inversor): descida direta pista=0
-                    if (ehAlimentacao && lado1 === "base") {
-                        let yCanal = alinharCanal(s1.y + SAIDA_BORNE);
-                        const limite = alinharCanal(s2.y - SAIDA_BORNE);
-                        if (yCanal > limite) yCanal = limite;
-                        return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                    }
-                }
-                if (lado2 === "base") {
-                    if (lado1 === "base") {
-                        let yCanal = alinharCanal(Math.max(s1.y, s2.y) + afastamento);
-                        return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                    }
-                    if (lado1 === "topo") {
-                        let yCanal = alinharCanal(s1.y + SAIDA_BORNE);
-                        const limite = alinharCanal(s2.y - SAIDA_BORNE);
-                        if (yCanal > limite) yCanal = limite;
-                        return `M ${fmt(s1.x)} ${fmt(s1.y)} L ${fmt(s1.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(yCanal)} L ${fmt(s2.x)} ${fmt(s2.y)}`;
-                    }
-                }
-            }
 
             // ───────────────────────────────────────────────────────────────────
             // REGRA 6: CASO PADRÃO (base-topo, base-base, topo-topo)
